@@ -43,40 +43,37 @@ public class WindSpeed{
         return atmosphereDensity;
     }
 
-    public double[] windSpeed(double xStartingPressure, double yStartingPressure, int latitude){
-        double[] windVelocity= new double[2];
+    public Vector windSpeed(double xStartingPressure, double yStartingPressure, int latitude){
+        Vector windVelocity= new Vector(0,0,0);
 
         xResultingPressure=(xPressureGradientForce/(4*Math.PI*Math.pow(titanRadius,2)))-xStartingPressure;
         double xPressureDifference=xStartingPressure-xResultingPressure;
         xWindVelocityCF=(-1/atmosphereDensity)*(xPressureDifference/(2*Math.PI* titanRadius))*timeStep;
         if(latitude!=0) {
-            windVelocity[0] = (xWindVelocityCF / (-2 * angularVelocity * Math.sin(latitude*Math.PI/180)));
+            windVelocity.setX((xWindVelocityCF / (-2 * angularVelocity * Math.sin(latitude*Math.PI/180))));
         }else{
-            windVelocity[0]=xWindVelocityCF;
+           windVelocity.setX(xWindVelocityCF);
         }
        
         yResultingPressure=(yPressureGradientForce/(4*Math.PI*Math.pow(titanRadius,2)))-yStartingPressure;
         double yPressureDifference=yStartingPressure-yResultingPressure;
         yWindVelocityCF=(-1/atmosphereDensity)*(yPressureDifference/(2*Math.PI* titanRadius))*timeStep;
         if(latitude!=0) {
-            windVelocity[1] = (yWindVelocityCF / (-2 * angularVelocity * Math.sin(latitude*Math.PI/180)));
+             windVelocity.setY((yWindVelocityCF / (-2 * angularVelocity * Math.sin(latitude*Math.PI/180))));
         }else{
-            windVelocity[1]=yWindVelocityCF;
+            windVelocity.setY(yWindVelocityCF);
         }
         return windVelocity;
     }
 
-    public double[] getPressure(){
-        double[] currentPressure= new double[2];
-        currentPressure[0]=xResultingPressure;
-        currentPressure[1]=yResultingPressure;
+    public Vector getPressure(){
+        Vector currentPressure= new Vector(xResultingPressure,yResultingPressure,0);
         return currentPressure;
     }
 
-    public double[] getDrag(double crossSectionalArea, double angleOfApproach){
-        double[] force= getPressure();
-        force[0]=xResultingPressure*crossSectionalArea*Math.cos(angleOfApproach);
-        force[1]=yResultingPressure*Math.sin(angleOfApproach)*crossSectionalArea;
+    public Vector getDrag(double crossSectionalArea, double angleOfApproach){
+        Vector netPressure= getPressure();
+        Vector force= new Vector(netPressure.getX()*crossSectionalArea*Math.cos(angleOfApproach),netPressure.getY()*Math.sin(angleOfApproach)*crossSectionalArea,0);
         return force;
 
     }
