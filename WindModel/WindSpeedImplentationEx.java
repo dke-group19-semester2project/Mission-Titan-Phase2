@@ -9,7 +9,7 @@ public class WindSpeedImplentationEx{
         //Need to use position data of Titan, but relative to Saturn for simplicity.
         Planet titan= new Planet(-7.769539650426797E+08,9.025640976089063E+08,-3.896658973030882E+08,-4.279217248263016E+03,-2.783704647125639E+03,1.856691783450268E+03,1.342E23,0);
         //Saturn is the center of this celestial system.
-        Star saturn = new Star(0D,0D,0D,0D,0D,0D, 5.68E26,695);
+        Planet saturn = new Planet(0D,0D,0D,0D,0D,0D, 5.68E26,695);
 
         //Same as the solar system construct.
         ArrayList<SpaceObject> titanSystem= new ArrayList<SpaceObject>();
@@ -42,7 +42,11 @@ public class WindSpeedImplentationEx{
                 titanWindSpeed.pressureGradientForce(titanSystem.get(1).getPosition().getX(), titanSystem.get(1).getPosition().getY(), titanSystem.get(1).getVelocity().getX(), titanSystem.get(1).getVelocity().getY());
                 double[] pressure = titanWindSpeed.getPressure();
                 double[] check2 = titanWindSpeed.windSpeed(pressure[0], pressure[1], 0);
-                double[]forces=titanWindSpeed.getDrag(4*Math.PI*Math.pow(6,2),4*Math.PI*Math.pow(6,2));
+                //Cross-sectional area relates to the surface area of a Sphere. Units m^2
+                double crossSectionalArea=4*Math.PI*Math.pow(6,2);
+                //Angle of approach should be in radians.
+                double angleOfApproach=Math.PI/4;
+                double[]forces=titanWindSpeed.getDrag(crossSectionalArea,angleOfApproach);
                 //System.out.println(check2[0] + " " + check2[1]);
 
                 if(i%2==0) {

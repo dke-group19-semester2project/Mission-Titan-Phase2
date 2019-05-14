@@ -73,10 +73,10 @@ public class WindSpeed{
         return currentPressure;
     }
 
-    public double[] getDrag(double xCrossSectionalArea,double yCrossSectionalArea){
+    public double[] getDrag(double crossSectionalArea, double angleOfApproach){
         double[] force= getPressure();
-        force[0]=xResultingPressure*xCrossSectionalArea;
-        force[1]=yResultingPressure*yCrossSectionalArea;
+        force[0]=xResultingPressure*crossSectionalArea*Math.cos(angleOfApproach);
+        force[1]=yResultingPressure*Math.sin(angleOfApproach)*crossSectionalArea;
         return force;
 
     }
