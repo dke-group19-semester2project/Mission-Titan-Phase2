@@ -10,6 +10,8 @@ public class Body {
     public static final double G = 6.674E-11; // unit: m3⋅kg−1⋅s−2 (gravitational constant)
     private Vector2D position; // Cartesian coordinates as m values.
     private Vector2D velocity; // Cartesian coordinates as m/s.
+    public double suicideBurn = 10*1000*1000;
+    public double thrusterForceMagnitude;
     double massInKg;
     double diameter; // In meters.
     double probeDragCoefficient = 0.42; // TODO: This value is only for testing - correct value still needs to be researched.
@@ -43,6 +45,13 @@ public class Body {
         The objective of method changeVelocityWithMainThrusters is to update velocity (without taking another time step).
         For now the spacecraft is presumed to be correctly oriented to either increase or reduce the speed.
      */
+    public void useMainThrusters (double magnitude) {
+        thrusterForceMagnitude = magnitude;
+    }
+    public void useSuicideBurn (double distance) {
+        double burn = Math.pow((suicideBurn/distance), 2);
+        thrusterForceMagnitude = thrusterForceMagnitude+burn;
+    }
     public void changeVelocityWithMainThrusters(Vector2D deltaV) {
         velocity = sumOf(velocity, deltaV);
     }
@@ -65,13 +74,13 @@ public class Body {
     public Vector2D getAcceleration (Body attractingBody) {
         // F=ma => a=F/m
         Vector2D force = getForceAsVector(attractingBody);
-        Vector2D drag = computeDragForce(attractingBody);
+        //Vector2D drag = computeDragForce(attractingBody);
         //force = sumOf(force, drag);
         Vector2D acceleration = force.dividedBy(this.massInKg); // Force is divided by the mass of the accelerating body
         return acceleration;
     }
     public Vector2D getForceAsVector (Body attractingBody) {
-        double magnitude = computeForceMagnitude(attractingBody);
+        double magnitude = computeForceMagnitude(attractingBody)-thrusterForceMagnitude; //TODO: test thrusterForceMagnitude
         Vector2D direction = computeForceDirection(attractingBody);
         Vector2D forceVector = direction.multipliedBy(magnitude);
         return forceVector;
@@ -98,29 +107,29 @@ public class Body {
         Vector2D unitVector = distanceVector.dividedBy(distance);
         return unitVector;
     }
-    public Vector2D computeDragForce (Body attractingBody) {
-        // Fd = (1/2)*fluidDensity*flowSpeed^2*Cd*A
-        double fluidDensity = getFluidDensity(attractingBody); // kg/m^3. TODO: Update to use fluid density from the wind program.
-        double flowSpeed = getFlowSpeed(); // m^3/s. TODO: Implement method in this class for now, but move it to the wind program.
-        double referenceArea = getReferenceArea();
-        double probeSpeed = this.getSpeed();
-        Vector2D dragUnitVector = velocity.dividedBy(-probeSpeed);
-        double dragMagnitude = 0.5*fluidDensity*Math.pow(flowSpeed,2)*probeDragCoefficient*referenceArea;
-        Vector2D dragForce = dragUnitVector.multipliedBy(dragMagnitude);
-        return dragForce;
-    }
-    public double getFluidDensity (Body attractingBody) {
-        // TODO: Remove when connected to the wind program.
-        double currentDistance = getDistanceFrom(attractingBody);
-        if (currentDistance>1000*1000) {
-            return 0;
-        }
-        double lowestDensity = Math.pow(10, -10); // These values are NOT accurate - used only for testing.
-        double highestDensity = 10; // These values are NOT accurate - used only for testing.
-        double densityDifference = highestDensity-lowestDensity;
-        double currentDensity = lowestDensity+(currentDistance/(1000000))*densityDifference;
-        return currentDensity;
-    }
+//    public Vector2D computeDragForce (Body attractingBody) {
+//        // Fd = (1/2)*fluidDensity*flowSpeed^2*Cd*A
+//        double fluidDensity = getFluidDensity(attractingBody); // kg/m^3. TODO: Update to use fluid density from the wind program.
+//        double flowSpeed = getFlowSpeed(); // m^3/s. TODO: Implement method in this class for now, but move it to the wind program.
+//        double referenceArea = getReferenceArea();
+//        double probeSpeed = this.getSpeed();
+//        Vector2D dragUnitVector = velocity.dividedBy(-probeSpeed);
+//        double dragMagnitude = 0.5*fluidDensity*Math.pow(flowSpeed,2)*probeDragCoefficient*referenceArea;
+//        Vector2D dragForce = dragUnitVector.multipliedBy(dragMagnitude);
+//        return dragForce;
+//    }
+//    public double getFluidDensity (Body attractingBody) {
+//        // TODO: Remove when connected to the wind program.
+//        double currentDistance = getDistanceFrom(attractingBody);
+//        if (currentDistance>1000*1000) {
+//            return 0;
+//        }
+//        double lowestDensity = Math.pow(10, -10); // These values are NOT accurate - used only for testing.
+//        double highestDensity = 10; // These values are NOT accurate - used only for testing.
+//        double densityDifference = highestDensity-lowestDensity;
+//        double currentDensity = lowestDensity+(currentDistance/(1000000))*densityDifference;
+//        return currentDensity;
+//    }
     public double getFlowSpeed () {
         // Unit: m/s. FlowSpeed is the magnitude of the vector representing the velocity of fluid relative to the probe.
         double probeSpeed = this.getSpeed();
