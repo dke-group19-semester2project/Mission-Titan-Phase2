@@ -16,6 +16,7 @@ public class Body {
     double diameter; // In meters.
     double probeDragCoefficient = 0.42; // TODO: This value is only for testing - correct value still needs to be researched.
     public static int simulationTime = 0;
+    WindSpeed windSpeed = new WindSpeed(1);
 
     public Body (Vector2D initialPosition, Vector2D initialVelocity, double mass, double diameter) {
         position = initialPosition;

@@ -75,6 +75,5 @@ public class WindSpeed{
         Vector3D netPressure= getPressure();
         Vector3D force= new Vector3D(netPressure.getX()*crossSectionalArea*Math.cos(angleOfApproach),netPressure.getY()*Math.sin(angleOfApproach)*crossSectionalArea,0);
         return force;
-
     }
 }

@@ -32,7 +32,7 @@ public class LandingTest extends JComponent{
         //Vector2D deltaV = probe.getVelocity().multipliedBy(0.5);
         //testLandingDeltaV(deltaV, 1);
         //solveDeltaV(1);
-        solveMultiplierAsFunctionOfDistance(1);
+        solveMultiplierAsFunctionOfDistance(1); /* This currently works as a combination of the two velocity methods. */
         //solveThrusterMagnitudeAsFunctionOfDistance(1);
 
 
