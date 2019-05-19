@@ -5,18 +5,17 @@
  * (For now the thrusters are only used to slow down the orbital velocity but later can be updated to ensure safe landing.)
  * The current model only models the acceleration and NOT the attitude of the probe (using torque).
  */
-import java.util.ArrayList;
 
 public class Body {
     public static final double G = 6.674E-11; // unit: m3⋅kg−1⋅s−2 (gravitational constant)
-    private Vector position; // Cartesian coordinates as m values.
-    private Vector velocity; // Cartesian coordinates as m/s.
+    private Vector2D position; // Cartesian coordinates as m values.
+    private Vector2D velocity; // Cartesian coordinates as m/s.
     double massInKg;
     double diameter; // In meters.
     double probeDragCoefficient = 0.42; // TODO: This value is only for testing - correct value still needs to be researched.
     public static int simulationTime = 0;
 
-    public Body (Vector initialPosition, Vector initialVelocity, double mass, double diameter) {
+    public Body (Vector2D initialPosition, Vector2D initialVelocity, double mass, double diameter) {
         position = initialPosition;
         velocity = initialVelocity;
         massInKg = mass;
@@ -25,10 +24,10 @@ public class Body {
     public double getDiameter () {
         return diameter;
     }
-    public Vector getPosition () {
+    public Vector2D getPosition () {
         return position;
     }
-    public Vector getVelocity () {
+    public Vector2D getVelocity () {
         return velocity;
     }
     public double getSpeed () {
@@ -41,40 +40,40 @@ public class Body {
     TODO: update to take into account the effect of other celestial bodies
      */
     /*
-        The objective of method useMainThrusters is to update velocity (without taking another time step).
+        The objective of method changeVelocityWithMainThrusters is to update velocity (without taking another time step).
         For now the spacecraft is presumed to be correctly oriented to either increase or reduce the speed.
      */
-    public void useMainThrusters (Vector deltaV) {
+    public void changeVelocityWithMainThrusters(Vector2D deltaV) {
         velocity = sumOf(velocity, deltaV);
     }
     public void updatePositionAndVelocity (int time, Body attractingBody) {
         simulationTime = simulationTime+time;
-        Vector acceleration = getAcceleration(attractingBody);
-        Vector changeInVelocity = getChangeInVelocity(acceleration, time);
-        Vector updatedVelocity = sumOf(this.getVelocity(), changeInVelocity);
+        Vector2D acceleration = getAcceleration(attractingBody);
+        Vector2D changeInVelocity = getChangeInVelocity(acceleration, time);
+        Vector2D updatedVelocity = sumOf(this.getVelocity(), changeInVelocity);
         this.velocity = updatedVelocity;
-        Vector changeInPosition = getChangeInPosition(updatedVelocity, time);
-        Vector updatedPosition = sumOf(this.getPosition(), changeInPosition);
+        Vector2D changeInPosition = getChangeInPosition(updatedVelocity, time);
+        Vector2D updatedPosition = sumOf(this.getPosition(), changeInPosition);
         this.position = updatedPosition;
     }
-    public Vector getChangeInVelocity (Vector acceleration, int time) {
+    public Vector2D getChangeInVelocity (Vector2D acceleration, int time) {
         return acceleration.multipliedBy(time);
     }
-    public Vector getChangeInPosition (Vector velocity, int time) {
+    public Vector2D getChangeInPosition (Vector2D velocity, int time) {
         return velocity.multipliedBy(time);
     }
-    public Vector getAcceleration (Body attractingBody) {
+    public Vector2D getAcceleration (Body attractingBody) {
         // F=ma => a=F/m
-        Vector force = getForceAsVector(attractingBody);
-        Vector drag = computeDragForce(attractingBody);
+        Vector2D force = getForceAsVector(attractingBody);
+        Vector2D drag = computeDragForce(attractingBody);
         //force = sumOf(force, drag);
-        Vector acceleration = force.dividedBy(this.massInKg); // Force is divided by the mass of the accelerating body
+        Vector2D acceleration = force.dividedBy(this.massInKg); // Force is divided by the mass of the accelerating body
         return acceleration;
     }
-    public Vector getForceAsVector (Body attractingBody) {
+    public Vector2D getForceAsVector (Body attractingBody) {
         double magnitude = computeForceMagnitude(attractingBody);
-        Vector direction = computeForceDirection(attractingBody);
-        Vector forceVector = direction.multipliedBy(magnitude);
+        Vector2D direction = computeForceDirection(attractingBody);
+        Vector2D forceVector = direction.multipliedBy(magnitude);
         return forceVector;
     }
     /*
@@ -86,28 +85,28 @@ public class Body {
         return forceMagnitude;
     }
     public double getDistanceFrom (Body attractingBody) {
-        Vector distanceVector = differenceOf(this.getPosition(), attractingBody.getPosition());
+        Vector2D distanceVector = differenceOf(this.getPosition(), attractingBody.getPosition());
         double distance = distanceVector.getEuclideanLength();
         return distance;
     }
     /*
     Direction of the force as a unit vector
      */
-    public Vector computeForceDirection (Body attractingBody) {
-        Vector distanceVector = differenceOf(this.getPosition(), attractingBody.getPosition());
+    public Vector2D computeForceDirection (Body attractingBody) {
+        Vector2D distanceVector = differenceOf(this.getPosition(), attractingBody.getPosition());
         double distance = distanceVector.getEuclideanLength();
-        Vector unitVector = distanceVector.dividedBy(distance);
+        Vector2D unitVector = distanceVector.dividedBy(distance);
         return unitVector;
     }
-    public Vector computeDragForce (Body attractingBody) {
+    public Vector2D computeDragForce (Body attractingBody) {
         // Fd = (1/2)*fluidDensity*flowSpeed^2*Cd*A
         double fluidDensity = getFluidDensity(attractingBody); // kg/m^3. TODO: Update to use fluid density from the wind program.
         double flowSpeed = getFlowSpeed(); // m^3/s. TODO: Implement method in this class for now, but move it to the wind program.
         double referenceArea = getReferenceArea();
         double probeSpeed = this.getSpeed();
-        Vector dragUnitVector = velocity.dividedBy(-probeSpeed);
+        Vector2D dragUnitVector = velocity.dividedBy(-probeSpeed);
         double dragMagnitude = 0.5*fluidDensity*Math.pow(flowSpeed,2)*probeDragCoefficient*referenceArea;
-        Vector dragForce = dragUnitVector.multipliedBy(dragMagnitude);
+        Vector2D dragForce = dragUnitVector.multipliedBy(dragMagnitude);
         return dragForce;
     }
     public double getFluidDensity (Body attractingBody) {
@@ -133,16 +132,16 @@ public class Body {
         double referenceArea = Math.PI*Math.pow((diameter/2), 2);
         return referenceArea;
     }
-    public Vector sumOf(Vector v, Vector u) {
+    public Vector2D sumOf(Vector2D v, Vector2D u) {
         double newX = v.x + u.x;
         double newY = v.y + u.y;
-        Vector sum = new Vector(newX, newY);
+        Vector2D sum = new Vector2D(newX, newY);
         return sum;
     }
-    public Vector differenceOf(Vector v, Vector u) {
+    public Vector2D differenceOf(Vector2D v, Vector2D u) {
         double newX = v.x-u.x;
         double newY = v.y-u.y;
-        Vector difference = new Vector (newX, newY);
+        Vector2D difference = new Vector2D(newX, newY);
         return difference;
     }
 }

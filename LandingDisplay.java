@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class LandingDisplay extends JComponent{
@@ -16,9 +15,9 @@ public class LandingDisplay extends JComponent{
     static double startingDistance = titanRadius+800*1000;
     public static void main(String[] args) {
         // Set-up
-        Body titan = new Body(new Vector(0,0), new Vector(0,0), 1.3452E23, 2*titanRadius);
+        Body titan = new Body(new Vector2D(0,0), new Vector2D(0,0), 1.3452E23, 2*titanRadius);
         bodies.add(titan);
-        Body probe = new Body(new Vector(8000000,0), new Vector(0, 100), 5000, 1);
+        Body probe = new Body(new Vector2D(8000000,0), new Vector2D(0, 100), 5000, 1);
         bodies.add(probe);
 
         JFrame frame = new JFrame();
@@ -27,21 +26,18 @@ public class LandingDisplay extends JComponent{
         frame.setSize(800, 800);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
-        //Vector deltaV = probe.getVelocity().multipliedBy(0.5);
+        //Vector2D deltaV = probe.getVelocity().multipliedBy(0.5);
         //simulateLanding(deltaV, 1);
         //solveDeltaV(1);
         solveMultiplierAsFunctionOfDistance(1);
 
 
     }
-    /*
-    TODO: Add a method similar to solveDeltaV, but replace constant deltaVMultiplier with a constant c multiplied by inverse distance to Titan
-     */
     public static void solveMultiplierAsFunctionOfDistance (int delayBetweenThrusterUse) {
         double maxMultiplier = 30*1000;
         double minMultiplier = 1;
         double midMultiplier = (maxMultiplier+minMultiplier)/2;
-        Vector landingVelocity = simulateLanding(() -> {
+        Vector2D landingVelocity = simulateLanding(() -> {
             double distance = bodies.get(1).getDistanceFrom(bodies.get(0));
             Double inverseDistance = 1/distance;
             return inverseDistance;
@@ -79,7 +75,7 @@ public class LandingDisplay extends JComponent{
         double maxDeltaVMultiplier = 0.5;
         double bracketMidPoint = (minDeltaVMultiplier+maxDeltaVMultiplier)/2;
         Double doubleBracketMidPoint = bracketMidPoint;
-        Vector landingVelocity = simulateLanding(() -> { return doubleBracketMidPoint; }, delayBetweenThrusterUse); // Landed safely with 0.25,
+        Vector2D landingVelocity = simulateLanding(() -> { return doubleBracketMidPoint; }, delayBetweenThrusterUse); // Landed safely with 0.25,
         int counter = 1;
         while (Math.abs(landingVelocity.x)>7 || Math.abs(landingVelocity.y)>7) {
             counter++;
@@ -90,19 +86,19 @@ public class LandingDisplay extends JComponent{
             landingVelocity = simulateLanding(() -> { return doubleBracketMidPoint; }, delayBetweenThrusterUse);
         }
     }
-    public static Vector simulateLanding(Supplier<Double> deltaVFunction, int delayBetweenThrusterUse) {
+    public static Vector2D simulateLanding(Supplier<Double> deltaVFunction, int delayBetweenThrusterUse) {
         boolean hasLanded = false;
         Body titan = bodies.get(0);
-        Body probe = new Body(new Vector(startingDistance,0), new Vector(0, 2000), 5000, 1);
+        Body probe = new Body(new Vector2D(startingDistance,0), new Vector2D(0, 2000), 5000, 1);
         bodies.set(1, probe);
-        Vector probeStartPosition = probe.getPosition();
-        Vector titanPosition = titan.getPosition();
-        Vector deltaV = probe.getVelocity().multipliedBy(-deltaVFunction.get());
+        Vector2D probeStartPosition = probe.getPosition();
+        Vector2D titanPosition = titan.getPosition();
+        Vector2D deltaV = probe.getVelocity().multipliedBy(-deltaVFunction.get());
 
         // Run upates and visualise with delay of 50 ms between updates
         for (int i=0; i<30000; i++) {
             if (i%delayBetweenThrusterUse==0) {
-                probe.useMainThrusters(deltaV);
+                probe.changeVelocityWithMainThrusters(deltaV);
                 deltaV = probe.getVelocity().multipliedBy(-deltaVFunction.get());
             }
             probe.updatePositionAndVelocity(1, titan);
@@ -133,7 +129,7 @@ public class LandingDisplay extends JComponent{
         //System.exit(1);
         return probe.getVelocity();
     }
-    public static void solveThrusterFrequency (Vector deltaV) {
+    public static void solveThrusterFrequency (Vector2D deltaV) {
         /* To be implemented only if we decide not to use thrusters constantly. DeltaV or at least its rate of change must be known. */
     }
     @Override
@@ -142,7 +138,7 @@ public class LandingDisplay extends JComponent{
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 
         for (Body body: bodies) {
-            Vector position = body.getPosition();
+            Vector2D position = body.getPosition();
             int scale = 16000;
             int size = Math.max(10, (int)body.getDiameter() / scale);
             int x = (int) position.x/ scale + 400 - size/2;

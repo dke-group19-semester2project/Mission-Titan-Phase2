@@ -43,8 +43,8 @@ public class WindSpeed{
         return atmosphereDensity;
     }
 
-    public Vector windSpeed(double xStartingPressure, double yStartingPressure, int latitude){
-        Vector windVelocity= new Vector(0,0,0);
+    public Vector3D windSpeed(double xStartingPressure, double yStartingPressure, int latitude){
+        Vector3D windVelocity= new Vector3D(0,0,0);
 
         xResultingPressure=(xPressureGradientForce/(4*Math.PI*Math.pow(titanRadius,2)))-xStartingPressure;
         double xPressureDifference=xStartingPressure-xResultingPressure;
@@ -66,14 +66,14 @@ public class WindSpeed{
         return windVelocity;
     }
 
-    public Vector getPressure(){
-        Vector currentPressure= new Vector(xResultingPressure,yResultingPressure,0);
+    public Vector3D getPressure(){
+        Vector3D currentPressure= new Vector3D(xResultingPressure,yResultingPressure,0);
         return currentPressure;
     }
 
-    public Vector getDrag(double crossSectionalArea, double angleOfApproach){
-        Vector netPressure= getPressure();
-        Vector force= new Vector(netPressure.getX()*crossSectionalArea*Math.cos(angleOfApproach),netPressure.getY()*Math.sin(angleOfApproach)*crossSectionalArea,0);
+    public Vector3D getDrag(double crossSectionalArea, double angleOfApproach){
+        Vector3D netPressure= getPressure();
+        Vector3D force= new Vector3D(netPressure.getX()*crossSectionalArea*Math.cos(angleOfApproach),netPressure.getY()*Math.sin(angleOfApproach)*crossSectionalArea,0);
         return force;
 
     }
