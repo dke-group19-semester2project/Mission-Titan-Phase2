@@ -42,10 +42,10 @@ public class WindSpeedImplentationEx{
                 titanWindSpeed.pressureGradientForce(titanSystem.get(1).getPosition().getX(), titanSystem.get(1).getPosition().getY(), titanSystem.get(1).getVelocity().getX(), titanSystem.get(1).getVelocity().getY());
                 Vector pressure = titanWindSpeed.getPressure();
                 Vector check2 = titanWindSpeed.windSpeed(pressure.getX(), pressure.getY(), 0);
-                //Cross-sectional area relates to the surface area of a Sphere. Units m^2
-                double crossSectionalArea=4*Math.PI*Math.pow(6,2);
+                //Cross-sectional area relates to the area of a circle. Units m^2
+                double crossSectionalArea=Math.PI*Math.pow(6,2);
                 //Angle of approach should be in radians.
-                double angleOfApproach=Math.PI/4;
+                double angleOfApproach=0;
                 Vector forces=titanWindSpeed.getDrag(crossSectionalArea,angleOfApproach);
                 //System.out.println(check2.getX() + " " + check2.getY());
 
