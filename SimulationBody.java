@@ -6,20 +6,21 @@
  * The current model only models the acceleration and NOT the attitude of the probe (using torque).
  */
 
-public class InternalSimulationBody {
+public class SimulationBody {
     public static final double G = 6.674E-11; // unit: m3⋅kg−1⋅s−2 (gravitational constant)
     private Vector2D position; // Cartesian coordinates as m values.
     private Vector2D velocity; // Cartesian coordinates as m/s.
     double massInKg;
     double diameter; // In meters.
     public static int simulationTime = 0;
-    public WindSpeed windSpeed = new WindSpeed(1);
+    public WindSpeedInterface windSpeed;
 
-    public InternalSimulationBody(Vector2D initialPosition, Vector2D initialVelocity, double mass, double diameter) {
+    public SimulationBody(Vector2D initialPosition, Vector2D initialVelocity, double mass, double diameter, WindSpeedInterface windSpeed) {
         position = initialPosition;
         velocity = initialVelocity;
         massInKg = mass;
         this.diameter = diameter;
+        this.windSpeed = windSpeed;
     }
     public double getDiameter () {
         return diameter;
@@ -41,7 +42,7 @@ public class InternalSimulationBody {
     public void changeVelocityWithMainThrusters(Vector2D deltaV) {
         velocity = sumOf(velocity, deltaV);
     }
-    public void updatePositionAndVelocity (int time, InternalSimulationBody attractingBody) {
+    public void updatePositionAndVelocity (int time, SimulationBody attractingBody) {
         simulationTime = simulationTime+time;
         Vector2D acceleration = getAcceleration(attractingBody);
         Vector2D changeInVelocity = getChangeInVelocity(acceleration, time);
@@ -57,7 +58,7 @@ public class InternalSimulationBody {
     public Vector2D getChangeInPosition (Vector2D velocity, int time) {
         return velocity.multipliedBy(time);
     }
-    public Vector2D getAcceleration (InternalSimulationBody attractingBody) {
+    public Vector2D getAcceleration (SimulationBody attractingBody) {
         // F=ma => a=F/m
         Vector2D gravitationalForce = getForceAsVector(attractingBody);
         Vector2D drag = new Vector2D(0,0); // TODO: This is used instead of actual drag until we figure out the problem with drag from windspeed
@@ -66,7 +67,7 @@ public class InternalSimulationBody {
         Vector2D acceleration = netForce.dividedBy(this.massInKg); // Force is divided by the mass of the accelerating body
         return acceleration;
     }
-    public Vector2D getForceAsVector (InternalSimulationBody attractingBody) {
+    public Vector2D getForceAsVector (SimulationBody attractingBody) {
         double magnitude = computeForceMagnitude(attractingBody);
         Vector2D direction = computeForceDirection(attractingBody);
         Vector2D forceVector = direction.multipliedBy(magnitude);
@@ -75,12 +76,12 @@ public class InternalSimulationBody {
     /*
     Magnitude of the force as a scalar value
      */
-    public double computeForceMagnitude (InternalSimulationBody attractingBody) {
+    public double computeForceMagnitude (SimulationBody attractingBody) {
         double distance = getDistanceFrom(attractingBody);
         double forceMagnitude = -(G*this.massInKg*attractingBody.massInKg)/Math.pow(distance,2);
         return forceMagnitude;
     }
-    public double getDistanceFrom (InternalSimulationBody attractingBody) {
+    public double getDistanceFrom (SimulationBody attractingBody) {
         Vector2D distanceVector = differenceOf(this.getPosition(), attractingBody.getPosition());
         double distance = distanceVector.getEuclideanLength();
         return distance;
@@ -88,7 +89,7 @@ public class InternalSimulationBody {
     /*
     Direction of the force as a unit vector
      */
-    public Vector2D computeForceDirection (InternalSimulationBody attractingBody) {
+    public Vector2D computeForceDirection (SimulationBody attractingBody) {
         Vector2D distanceVector = differenceOf(this.getPosition(), attractingBody.getPosition());
         double distance = distanceVector.getEuclideanLength();
         Vector2D unitVector = distanceVector.dividedBy(distance);

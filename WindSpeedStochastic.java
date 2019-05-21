@@ -1,5 +1,5 @@
 import java.util.ArrayList;
-public class WindSpeedStochastic{
+public class WindSpeedStochastic implements WindSpeedInterface {
     private double massSaturn=5.68E26;//(Units: kg)
     private double massTitan=1.342E23;// (Units: kg)
     private double atmosphereDensity;//Atmospheric density of the planet on which you want to calculate the wind speed. (Units: kg/m^3)

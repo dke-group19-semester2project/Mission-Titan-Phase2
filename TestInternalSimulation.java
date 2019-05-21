@@ -10,7 +10,7 @@ public class TestInternalSimulation extends JComponent{
     //public static final double G = 6.674E-11; // unit: m3⋅kg−1⋅s−2 (gravitational constant)
     private static double minDistance;
     //private static int minDistanceTime;
-    private static ArrayList<InternalSimulationBody> bodies = new ArrayList<InternalSimulationBody>();
+    private static ArrayList<SimulationBody> bodies = new ArrayList<SimulationBody>();
     static TestInternalSimulation display;
     static double titanRadius = 2575*1000;
     static double startingDistance = titanRadius+800*1000;
@@ -18,9 +18,9 @@ public class TestInternalSimulation extends JComponent{
     //static double orbitalSpeed = Math.sqrt((G*probeMass)/(startingDistance-titanRadius));
     public static void main(String[] args) {
         // Set-up
-        InternalSimulationBody titan = new InternalSimulationBody(new Vector2D(0,0), new Vector2D(0,0), 1.3452E23, 2*titanRadius);
+        SimulationBody titan = new SimulationBody(new Vector2D(0,0), new Vector2D(0,0), 1.3452E23, 2*titanRadius, new WindSpeed(1));
         bodies.add(titan);
-        InternalSimulationBody probe = new InternalSimulationBody(new Vector2D(8000000,0), new Vector2D(0, 100), 5000, 1);
+        SimulationBody probe = new SimulationBody(new Vector2D(8000000,0), new Vector2D(0, 100), 5000, 1, new WindSpeed(1));
         bodies.add(probe);
 
         JFrame frame = new JFrame();
@@ -96,8 +96,8 @@ public class TestInternalSimulation extends JComponent{
         double landingBurnFactor = 0.15;
         double maxLandingBurnFactor = 0.5;
         boolean hasLanded = false;
-        InternalSimulationBody titan = bodies.get(0);
-        InternalSimulationBody probe = new InternalSimulationBody(new Vector2D(startingDistance,0), new Vector2D(0, 1600), 5000, 1);
+        SimulationBody titan = bodies.get(0);
+        SimulationBody probe = new SimulationBody(new Vector2D(startingDistance,0), new Vector2D(0, 1600), 5000, 1, new WindSpeed(1));
         bodies.set(1, probe);
         System.out.println("Starting position: " + probe.getPosition().toString());
         System.out.println("Starting velocity: " + probe.getVelocity().toString());
@@ -153,7 +153,7 @@ public class TestInternalSimulation extends JComponent{
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 
-        for (InternalSimulationBody body: bodies) {
+        for (SimulationBody body: bodies) {
             Vector2D position = body.getPosition();
             int scale = 16000;
             int size = Math.max(10, (int)body.getDiameter() / scale);
@@ -191,8 +191,8 @@ public class TestInternalSimulation extends JComponent{
 //    }
 //    public static boolean testLanding(int delayBetweenThrusterUse, Supplier<Double> thrusterForceMagnitude) {
 //        boolean hasLanded = false;
-//        InternalSimulationBody titan = bodies.get(0);
-//        InternalSimulationBody probe = new InternalSimulationBody(new Vector2D(startingDistance,0), new Vector2D(0, 1700), 5000, 1);
+//        SimulationBody titan = bodies.get(0);
+//        SimulationBody probe = new SimulationBody(new Vector2D(startingDistance,0), new Vector2D(0, 1700), 5000, 1);
 //        bodies.set(1, probe);
 //        double thrusterMagnitude = thrusterForceMagnitude.get();
 //
