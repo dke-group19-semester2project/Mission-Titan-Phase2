@@ -66,34 +66,8 @@ public class TestInternalSimulation extends JComponent{
         }
     }
 
-/*
-    solveDeltaV is a method intended to solve for a CONSTANT multiplier for the DeltaV which would lead to landing safely.
- */
-    public static void solveDeltaV (int delayBetweenThrusterUse) {
-        // DeltaV is understood in this context as purely the change in velocity.
-        // Want to find the constant deltaV vector which will be applied to the probe every time the thruster is used.
-        // For now the presumption is that thrusters are applied constantly, i.e. with every update of position.
-        // DeltaV will be defined so that it is collinear with the velocity vector.
-        // For decreasing velocity, DeltaV equals -a*velocity, with 0<a<1. For increasing velocity, DeltaV equals a*velocity.
-        // If this approach does not work: try approaching deltaV through its (second) derivative instead.
-        // Starting bracket for DeltaV: [0, 1] (find a value between no change to velocity and stopping the spacecraft completely).
-        double minDeltaVMultiplier = 0.0;
-        double maxDeltaVMultiplier = 0.5;
-        double bracketMidPoint = (minDeltaVMultiplier+maxDeltaVMultiplier)/2;
-        Double doubleBracketMidPoint = bracketMidPoint;
-        Vector2D landingVelocity = testLandingDeltaV(() -> { return doubleBracketMidPoint; }, delayBetweenThrusterUse); // Landed safely with 0.25,
-        int counter = 1;
-        while (Math.abs(landingVelocity.x)>7 || Math.abs(landingVelocity.y)>7) {
-            counter++;
-            minDeltaVMultiplier = bracketMidPoint; // Testing with max instead of min may give smaller acceptable values
-            bracketMidPoint = (minDeltaVMultiplier+maxDeltaVMultiplier)/2;
-            System.out.println("Attempt " + counter);
-            System.out.println("DeltaVMultiplier: " + bracketMidPoint);
-            landingVelocity = testLandingDeltaV(() -> { return doubleBracketMidPoint; }, delayBetweenThrusterUse);
-        }
-    }
     public static Vector2D testLandingDeltaV(Supplier<Double> deltaVFunction, int delayBetweenThrusterUse) {
-        double landingBurnFactor = 0.15;
+        double landingBurnFactor = 0.001;
         double maxLandingBurnFactor = 0.5;
         boolean hasLanded = false;
         SimulationBody titan = bodies.get(0);
@@ -110,8 +84,10 @@ public class TestInternalSimulation extends JComponent{
             if (i%delayBetweenThrusterUse==0) {
                 double currentDistance = probe.getDistanceFrom(titan);
                 if (currentDistance<titanRadius+10*1000) {
+                    //System.out.println("Current velocity before landing burn: " + probe.getVelocity().toString());
                     deltaV = probe.getVelocity().multipliedBy(-landingBurnFactor);
                     landingBurnFactor = (landingBurnFactor+maxLandingBurnFactor)/2;
+                    //System.out.println("LandingBurnFactor: " + landingBurnFactor);
                     probe.changeVelocityWithMainThrusters(deltaV);
                 } else {
                     probe.changeVelocityWithMainThrusters(deltaV);
@@ -163,76 +139,5 @@ public class TestInternalSimulation extends JComponent{
         }
 
     }
-    class DisplayListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
 
-        }
-    }
-
-//    public static void solveThrusterMagnitudeAsFunctionOfDistance (int delayBetweenThrusterUse) {
-//        Double maxMultiplier = 161*1000*1000.0; // TODO
-//        Double minMultiplier= 10*1000*1000.0; //TODO
-//        double midMultiplier = (maxMultiplier+minMultiplier)/2;
-//        boolean safeLanding = testLanding(1, () -> {
-//            double distance = bodies.get(1).getDistanceFrom(bodies.get(0));
-//            Double inverseDistance = 1/distance;
-//            return inverseDistance*midMultiplier;
-//        });
-//        while (!safeLanding) {
-//            minMultiplier = midMultiplier;
-//            Double doubleMidMultiplier = (maxMultiplier+minMultiplier)/2;
-//            safeLanding = testLanding(1, () -> {
-//                double distance = bodies.get(1).getDistanceFrom(bodies.get(0));
-//                Double inverseDistance = 1/distance;
-//                return Math.pow((inverseDistance*doubleMidMultiplier), 2);
-//            });
-//        }
-//    }
-//    public static boolean testLanding(int delayBetweenThrusterUse, Supplier<Double> thrusterForceMagnitude) {
-//        boolean hasLanded = false;
-//        SimulationBody titan = bodies.get(0);
-//        SimulationBody probe = new SimulationBody(new Vector2D(startingDistance,0), new Vector2D(0, 1700), 5000, 1);
-//        bodies.set(1, probe);
-//        double thrusterMagnitude = thrusterForceMagnitude.get();
-//
-//        for (int i=0; i<10000; i++) {
-//            if (i % delayBetweenThrusterUse == 0) {
-//                probe.useMainThrusters(thrusterMagnitude);
-//                double distance = probe.getDistanceFrom(titan);
-//                if (distance<(titanRadius+100*1000)) {
-//                    probe.useSuicideBurn(distance);
-//                }
-//            }
-//            probe.updatePositionAndVelocity(1, titan);
-//            //System.out.println("Current velocity: " +probe.getVelocity().toString());
-//            System.out.println("Gravitational force: " + probe.computeForceMagnitude(titan));
-//            System.out.println("Thruster magnitude: " + probe.thrusterForceMagnitude);
-//            if (i % 100 == 0) {
-//                display.repaint();
-//                try {
-//                    TimeUnit.MILLISECONDS.sleep(20);
-//                } catch (Exception e) {
-//                    throw new RuntimeException(e);
-//                }
-//            }
-//            double newDistance = probe.getDistanceFrom(titan);
-//            //System.out.println("Current distance: " + newDistance);
-//            //System.out.println("Current velocity: " + probe.getVelocity().toString());
-//            if (newDistance<=titanRadius) {
-//                hasLanded = true;
-//                System.out.println("The probe has landed.");
-//                System.out.println("Current distance: Probe\n" + newDistance);
-//                System.out.println("Current velocity: Probe\n" + probe.getVelocity().toString());
-//                break;
-//            }
-//        }
-//        if (!hasLanded) {
-//            System.out.println("Did not manage to land. ");
-//        }
-//
-//        // TODO: add code to test for safe landing speed
-//        return hasLanded;
-//
-//    }
 }
