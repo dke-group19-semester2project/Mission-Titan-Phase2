@@ -6,25 +6,25 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
-public class InternalSimulation extends JComponent{
-    public static final double G = 6.674E-11; // unit: m3⋅kg−1⋅s−2 (gravitational constant)
+public class TestInternalSimulation extends JComponent{
+    //public static final double G = 6.674E-11; // unit: m3⋅kg−1⋅s−2 (gravitational constant)
     private static double minDistance;
-    private static int minDistanceTime;
-    private static ArrayList<Body> bodies = new ArrayList<Body>();
-    static InternalSimulation display;
+    //private static int minDistanceTime;
+    private static ArrayList<InternalSimulationBody> bodies = new ArrayList<InternalSimulationBody>();
+    static TestInternalSimulation display;
     static double titanRadius = 2575*1000;
     static double startingDistance = titanRadius+800*1000;
     static double probeMass = 5000;
-    static double orbitalSpeed = Math.sqrt((G*probeMass)/(startingDistance-titanRadius));
+    //static double orbitalSpeed = Math.sqrt((G*probeMass)/(startingDistance-titanRadius));
     public static void main(String[] args) {
         // Set-up
-        Body titan = new Body(new Vector2D(0,0), new Vector2D(0,0), 1.3452E23, 2*titanRadius);
+        InternalSimulationBody titan = new InternalSimulationBody(new Vector2D(0,0), new Vector2D(0,0), 1.3452E23, 2*titanRadius);
         bodies.add(titan);
-        Body probe = new Body(new Vector2D(8000000,0), new Vector2D(0, 100), 5000, 1);
+        InternalSimulationBody probe = new InternalSimulationBody(new Vector2D(8000000,0), new Vector2D(0, 100), 5000, 1);
         bodies.add(probe);
 
         JFrame frame = new JFrame();
-        display = new InternalSimulation();
+        display = new TestInternalSimulation();
         frame.add(display);
         frame.setSize(800, 800);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -37,71 +37,7 @@ public class InternalSimulation extends JComponent{
 
 
     }
-    public static void solveThrusterMagnitudeAsFunctionOfDistance (int delayBetweenThrusterUse) {
-        Double maxMultiplier = 161*1000*1000.0; // TODO
-        Double minMultiplier= 10*1000*1000.0; //TODO
-        double midMultiplier = (maxMultiplier+minMultiplier)/2;
-        boolean safeLanding = testLanding(1, () -> {
-            double distance = bodies.get(1).getDistanceFrom(bodies.get(0));
-            Double inverseDistance = 1/distance;
-            return inverseDistance*midMultiplier;
-        });
-        while (!safeLanding) {
-            minMultiplier = midMultiplier;
-            Double doubleMidMultiplier = (maxMultiplier+minMultiplier)/2;
-            safeLanding = testLanding(1, () -> {
-                double distance = bodies.get(1).getDistanceFrom(bodies.get(0));
-                Double inverseDistance = 1/distance;
-                return Math.pow((inverseDistance*doubleMidMultiplier), 2);
-            });
-        }
-    }
-    public static boolean testLanding(int delayBetweenThrusterUse, Supplier<Double> thrusterForceMagnitude) {
-        boolean hasLanded = false;
-        Body titan = bodies.get(0);
-        Body probe = new Body(new Vector2D(startingDistance,0), new Vector2D(0, 1700), 5000, 1);
-        bodies.set(1, probe);
-        double thrusterMagnitude = thrusterForceMagnitude.get();
 
-        for (int i=0; i<10000; i++) {
-            if (i % delayBetweenThrusterUse == 0) {
-                probe.useMainThrusters(thrusterMagnitude);
-                double distance = probe.getDistanceFrom(titan);
-                if (distance<(titanRadius+100*1000)) {
-                    probe.useSuicideBurn(distance);
-                }
-            }
-            probe.updatePositionAndVelocity(1, titan);
-            //System.out.println("Current velocity: " +probe.getVelocity().toString());
-            System.out.println("Gravitational force: " + probe.computeForceMagnitude(titan));
-            System.out.println("Thruster magnitude: " + probe.thrusterForceMagnitude);
-            if (i % 100 == 0) {
-                display.repaint();
-                try {
-                    TimeUnit.MILLISECONDS.sleep(20);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            double newDistance = probe.getDistanceFrom(titan);
-            //System.out.println("Current distance: " + newDistance);
-            //System.out.println("Current velocity: " + probe.getVelocity().toString());
-            if (newDistance<=titanRadius) {
-                hasLanded = true;
-                System.out.println("The probe has landed.");
-                System.out.println("Current distance: Probe\n" + newDistance);
-                System.out.println("Current velocity: Probe\n" + probe.getVelocity().toString());
-                break;
-            }
-        }
-        if (!hasLanded) {
-            System.out.println("Did not manage to land. ");
-        }
-
-        // TODO: add code to test for safe landing speed
-        return hasLanded;
-
-    }
     public static void solveMultiplierAsFunctionOfDistance (int delayBetweenThrusterUse) {
         double maxMultiplier = 30*1000;
         double minMultiplier = 1;
@@ -160,8 +96,8 @@ public class InternalSimulation extends JComponent{
         double landingBurnFactor = 0.15;
         double maxLandingBurnFactor = 0.5;
         boolean hasLanded = false;
-        Body titan = bodies.get(0);
-        Body probe = new Body(new Vector2D(startingDistance,0), new Vector2D(0, 1600), 5000, 1);
+        InternalSimulationBody titan = bodies.get(0);
+        InternalSimulationBody probe = new InternalSimulationBody(new Vector2D(startingDistance,0), new Vector2D(0, 1600), 5000, 1);
         bodies.set(1, probe);
         System.out.println("Starting position: " + probe.getPosition().toString());
         System.out.println("Starting velocity: " + probe.getVelocity().toString());
@@ -217,7 +153,7 @@ public class InternalSimulation extends JComponent{
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 
-        for (Body body: bodies) {
+        for (InternalSimulationBody body: bodies) {
             Vector2D position = body.getPosition();
             int scale = 16000;
             int size = Math.max(10, (int)body.getDiameter() / scale);
@@ -233,4 +169,70 @@ public class InternalSimulation extends JComponent{
 
         }
     }
+
+//    public static void solveThrusterMagnitudeAsFunctionOfDistance (int delayBetweenThrusterUse) {
+//        Double maxMultiplier = 161*1000*1000.0; // TODO
+//        Double minMultiplier= 10*1000*1000.0; //TODO
+//        double midMultiplier = (maxMultiplier+minMultiplier)/2;
+//        boolean safeLanding = testLanding(1, () -> {
+//            double distance = bodies.get(1).getDistanceFrom(bodies.get(0));
+//            Double inverseDistance = 1/distance;
+//            return inverseDistance*midMultiplier;
+//        });
+//        while (!safeLanding) {
+//            minMultiplier = midMultiplier;
+//            Double doubleMidMultiplier = (maxMultiplier+minMultiplier)/2;
+//            safeLanding = testLanding(1, () -> {
+//                double distance = bodies.get(1).getDistanceFrom(bodies.get(0));
+//                Double inverseDistance = 1/distance;
+//                return Math.pow((inverseDistance*doubleMidMultiplier), 2);
+//            });
+//        }
+//    }
+//    public static boolean testLanding(int delayBetweenThrusterUse, Supplier<Double> thrusterForceMagnitude) {
+//        boolean hasLanded = false;
+//        InternalSimulationBody titan = bodies.get(0);
+//        InternalSimulationBody probe = new InternalSimulationBody(new Vector2D(startingDistance,0), new Vector2D(0, 1700), 5000, 1);
+//        bodies.set(1, probe);
+//        double thrusterMagnitude = thrusterForceMagnitude.get();
+//
+//        for (int i=0; i<10000; i++) {
+//            if (i % delayBetweenThrusterUse == 0) {
+//                probe.useMainThrusters(thrusterMagnitude);
+//                double distance = probe.getDistanceFrom(titan);
+//                if (distance<(titanRadius+100*1000)) {
+//                    probe.useSuicideBurn(distance);
+//                }
+//            }
+//            probe.updatePositionAndVelocity(1, titan);
+//            //System.out.println("Current velocity: " +probe.getVelocity().toString());
+//            System.out.println("Gravitational force: " + probe.computeForceMagnitude(titan));
+//            System.out.println("Thruster magnitude: " + probe.thrusterForceMagnitude);
+//            if (i % 100 == 0) {
+//                display.repaint();
+//                try {
+//                    TimeUnit.MILLISECONDS.sleep(20);
+//                } catch (Exception e) {
+//                    throw new RuntimeException(e);
+//                }
+//            }
+//            double newDistance = probe.getDistanceFrom(titan);
+//            //System.out.println("Current distance: " + newDistance);
+//            //System.out.println("Current velocity: " + probe.getVelocity().toString());
+//            if (newDistance<=titanRadius) {
+//                hasLanded = true;
+//                System.out.println("The probe has landed.");
+//                System.out.println("Current distance: Probe\n" + newDistance);
+//                System.out.println("Current velocity: Probe\n" + probe.getVelocity().toString());
+//                break;
+//            }
+//        }
+//        if (!hasLanded) {
+//            System.out.println("Did not manage to land. ");
+//        }
+//
+//        // TODO: add code to test for safe landing speed
+//        return hasLanded;
+//
+//    }
 }
