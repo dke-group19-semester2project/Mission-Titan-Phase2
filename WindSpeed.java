@@ -1,5 +1,5 @@
 import java.util.ArrayList;
-public class WindSpeed{
+public class WindSpeed implements WindSpeedInterface {
     private double massSaturn=5.68E26;//(Units: kg)
     private double massTitan=1.342E23;// (Units: kg)
     private double atmosphereDensity;//Atmospheric density of the planet on which you want to calculate the wind speed. (Units: kg/m^3)
@@ -81,7 +81,7 @@ public class WindSpeed{
         return currentPressure;
     }
 
-    public Vector2D getDrag(Vector2D positionOfCraft){
+    public Vector2D updateModelAndGetDrag(Vector2D positionOfCraft){
         //Cross-sectional area relates to the area of a circle. Units m^2
         double altitude=Math.sqrt(Math.pow(positionOfCraft.getX(),2)+Math.pow(positionOfCraft.getY(),2));
         double height=(altitude-titanRadius)/10E3;

@@ -1,6 +1,3 @@
-import java.lang.Math;
-import java.util.ArrayList;
-
 public class WindSpeedStochImplentationEx{
     //Date starting on January 1,2000
 
@@ -19,7 +16,7 @@ public class WindSpeedStochImplentationEx{
              
              //Updates wind model and computes drag and lift.
              //Drag is the x, lift is the y. 
-             Vector2D forces=titanWindSpeed.getDrag(position);
+             Vector2D forces=titanWindSpeed.updateModelAndGetDrag(position);
              System.out.println(forces.getX() + " " + forces.getY());
             }
         }

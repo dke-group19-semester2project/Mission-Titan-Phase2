@@ -1,6 +1,3 @@
-import java.lang.Math;
-import java.util.ArrayList;
-
 public class WindSpeedImplentationEx{
     //Date starting on January 1,2000
     public static void main(String[] args){
@@ -16,7 +13,7 @@ public class WindSpeedImplentationEx{
                 position.setY(0);
                 //Updates wind model and computes drag and lift.
                 //Drag is the x, lift is the y. 
-                Vector2D forces=titanWindSpeed.getDrag(position);
+                Vector2D forces=titanWindSpeed.updateModelAndGetDrag(position);
                 System.out.println(forces.getX() + " " + forces.getY());
             }
         }

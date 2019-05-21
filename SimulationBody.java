@@ -6,23 +6,21 @@
  * The current model only models the acceleration and NOT the attitude of the probe (using torque).
  */
 
-public class Body {
+public class SimulationBody {
     public static final double G = 6.674E-11; // unit: m3⋅kg−1⋅s−2 (gravitational constant)
     private Vector2D position; // Cartesian coordinates as m values.
     private Vector2D velocity; // Cartesian coordinates as m/s.
-    public double suicideBurn = 10*1000*1000;
-    public double thrusterForceMagnitude;
     double massInKg;
     double diameter; // In meters.
-    double probeDragCoefficient = 0.42; // TODO: This value is only for testing - correct value still needs to be researched.
     public static int simulationTime = 0;
-    WindSpeed windSpeed = new WindSpeed(1);
+    public WindSpeedInterface windSpeed;
 
-    public Body (Vector2D initialPosition, Vector2D initialVelocity, double mass, double diameter) {
+    public SimulationBody(Vector2D initialPosition, Vector2D initialVelocity, double mass, double diameter, WindSpeedInterface windSpeed) {
         position = initialPosition;
         velocity = initialVelocity;
         massInKg = mass;
         this.diameter = diameter;
+        this.windSpeed = windSpeed;
     }
     public double getDiameter () {
         return diameter;
@@ -41,17 +39,10 @@ public class Body {
         The objective of method changeVelocityWithMainThrusters is to update velocity (without taking another time step).
         For now the spacecraft is presumed to be correctly oriented to either increase or reduce the speed.
      */
-    public void useMainThrusters (double magnitude) {
-        thrusterForceMagnitude = magnitude;
-    }
-    public void useSuicideBurn (double distance) {
-        double burn = Math.pow((suicideBurn/distance), 2);
-        thrusterForceMagnitude = thrusterForceMagnitude+burn;
-    }
     public void changeVelocityWithMainThrusters(Vector2D deltaV) {
         velocity = sumOf(velocity, deltaV);
     }
-    public void updatePositionAndVelocity (int time, Body attractingBody) {
+    public void updatePositionAndVelocity (int time, SimulationBody attractingBody) {
         simulationTime = simulationTime+time;
         Vector2D acceleration = getAcceleration(attractingBody);
         Vector2D changeInVelocity = getChangeInVelocity(acceleration, time);
@@ -67,16 +58,17 @@ public class Body {
     public Vector2D getChangeInPosition (Vector2D velocity, int time) {
         return velocity.multipliedBy(time);
     }
-    public Vector2D getAcceleration (Body attractingBody) {
+    public Vector2D getAcceleration (SimulationBody attractingBody) {
         // F=ma => a=F/m
         Vector2D gravitationalForce = getForceAsVector(attractingBody);
-        Vector2D drag = windSpeed.getDrag(position);
+        Vector2D drag = new Vector2D(0,0); // TODO: This is used instead of actual drag until we figure out the problem with drag from windspeed
+        //Vector2D drag = windSpeed.updateModelAndGetDrag(position);
         Vector2D netForce = sumOf(gravitationalForce, drag);
         Vector2D acceleration = netForce.dividedBy(this.massInKg); // Force is divided by the mass of the accelerating body
         return acceleration;
     }
-    public Vector2D getForceAsVector (Body attractingBody) {
-        double magnitude = computeForceMagnitude(attractingBody)-thrusterForceMagnitude; //TODO: test thrusterForceMagnitude
+    public Vector2D getForceAsVector (SimulationBody attractingBody) {
+        double magnitude = computeForceMagnitude(attractingBody);
         Vector2D direction = computeForceDirection(attractingBody);
         Vector2D forceVector = direction.multipliedBy(magnitude);
         return forceVector;
@@ -84,12 +76,12 @@ public class Body {
     /*
     Magnitude of the force as a scalar value
      */
-    public double computeForceMagnitude (Body attractingBody) {
+    public double computeForceMagnitude (SimulationBody attractingBody) {
         double distance = getDistanceFrom(attractingBody);
         double forceMagnitude = -(G*this.massInKg*attractingBody.massInKg)/Math.pow(distance,2);
         return forceMagnitude;
     }
-    public double getDistanceFrom (Body attractingBody) {
+    public double getDistanceFrom (SimulationBody attractingBody) {
         Vector2D distanceVector = differenceOf(this.getPosition(), attractingBody.getPosition());
         double distance = distanceVector.getEuclideanLength();
         return distance;
@@ -97,7 +89,7 @@ public class Body {
     /*
     Direction of the force as a unit vector
      */
-    public Vector2D computeForceDirection (Body attractingBody) {
+    public Vector2D computeForceDirection (SimulationBody attractingBody) {
         Vector2D distanceVector = differenceOf(this.getPosition(), attractingBody.getPosition());
         double distance = distanceVector.getEuclideanLength();
         Vector2D unitVector = distanceVector.dividedBy(distance);
