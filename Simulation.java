@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
-//import java.util.concurrent.TimeUnit;
 
 public class Simulation {
 
@@ -28,8 +27,6 @@ public class Simulation {
     // display the frame in the main method
     Display display = new Display();
     static double titanRadius = 2575*1000;
-//    static double startingDistance = titanRadius+800*1000;
-//    static double probeMass = 5000;
     ControllerInterface controller;
     SimulationBody titan;
     SimulationBody probe;
@@ -40,12 +37,7 @@ public class Simulation {
         this.probe = probe;
         bodies.add(probe);
     }
-    public void run () { // Might want to change this method to e.g. run() and move the main method to a different class
-        // TODO: The bodies below should ultimately be initialised with WindSpeedStochastic
-//        SimulationBody titan = new SimulationBody(new Vector2D(0,0), new Vector2D(0,0), 1.3452E23, 2*titanRadius, new WindSpeed(1));
-//        bodies.add(titan);
-//        SimulationBody probe = new SimulationBody(new Vector2D(startingDistance,0), new Vector2D(0, 1600), 5000, 1, new WindSpeed(1));
-//        bodies.add(probe);
+    public void run () {
 
         // GUI
         JFrame frame = new JFrame();
@@ -55,6 +47,19 @@ public class Simulation {
         frame.setVisible(true);
 
         // Test 'external' simulation (which for now is actually the internal one)
+        // TODO: Finish the for-loop below so that it does not mess with the deltaV calculations and is able to show a couple of rounds in orbit.
+//
+//        for (int i=0; i<60000; i++) {
+//            probe.updatePositionAndVelocity(1, titan);
+//            if(i % 100 == 0) {
+//                display.repaint();
+//                try {
+//                    TimeUnit.MILLISECONDS.sleep(20);
+//                } catch (Exception e) {
+//                    throw new RuntimeException(e);
+//                }
+//            }
+//        }
         boolean hasLanded = false;
         for (int i=0; i<60000; i++) {
             Vector2D deltaV = controller.getDeltaV();

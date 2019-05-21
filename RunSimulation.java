@@ -1,5 +1,8 @@
 public class RunSimulation {
     public static void main(String[] args) {
+        // For each simulation which is run, initialise the Controller as either feedback or OL controller,
+        // and initialise the bodies with either stochastic or non-stochastic wind
+
         double titanRadius = 2575*1000;
         double startingDistance = titanRadius+800*1000;
         double probeMass = 5000;
