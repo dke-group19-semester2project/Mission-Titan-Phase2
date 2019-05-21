@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 public class WindSpeedStochastic{
     private double massSaturn=5.68E26;//(Units: kg)
     private double massTitan=1.342E23;// (Units: kg)
@@ -16,11 +17,20 @@ public class WindSpeedStochastic{
     private double atmosphericMass;//Units: kg
     private double conversionFactor=10E3; //Converts m/s to km/s for windspeed.
     private double timeStep;//How many seconds per calculation.
-    /*Must have it output in km/s.
-    Height must also be in km.*/
+    //Need to use position data of Titan, but relative to Saturn for simplicity.
+    private Planet titan= new Planet(-7.769539650426797E+08,9.025640976089063E+08,-3.896658973030882E+08,-4.279217248263016E+03,-2.783704647125639E+03,1.856691783450268E+03,1.342E23,0);
+    //Saturn is the center of this celestial system.
+    private Planet saturn = new Planet(0D,0D,0D,0D,0D,0D, 5.68E26,695);
+    private ArrayList<SpaceObject> titanSystem= new ArrayList<SpaceObject>();
+    private final double ATMOSPHERE_HEIGHT=1400;
    
     WindSpeedStochastic(double timeStep){
         this.timeStep=timeStep;
+        titanSystem.add(saturn);
+        titanSystem.add(titan);
+        setAtmosphericDensity(ATMOSPHERE_HEIGHT);
+        //Position information of Titan and Saturn on January 1, 2000
+        pressureGradientForce(-7.769539650426797E+08,9.025640976089063E+08,-4.279217248263016E+03,-2.783704647125639E+03);
     }
 
     public void setAtmosphericDensity(double height){
@@ -43,37 +53,60 @@ public class WindSpeedStochastic{
         return atmosphereDensity;
     }
 
-    public Vector3D windSpeedStochastic(double xStartingPressure, double yStartingPressure, double latitude){
-        Vector3D windVelocity= new Vector3D(0,0,0);
+    public void windSpeed(double xStartingPressure, double yStartingPressure, double latitude){
+        Vector2D windVelocity= new Vector2D(0,0);
 
         xResultingPressure=(xPressureGradientForce/(4*Math.PI*Math.pow(titanRadius,2)))-xStartingPressure;
+        xResultingPressure=xResultingPressure+Math.random()*0.2*xResultingPressure;
         double xPressureDifference=xStartingPressure-xResultingPressure;
         xWindVelocityCF=(-1/atmosphereDensity)*(xPressureDifference/(2*Math.PI* titanRadius))*timeStep;
         if(latitude!=0) {
-            windVelocity.setX(((xWindVelocityCF +Math.random()*0.8*xWindVelocityCF) / (-2 * angularVelocity * Math.sin(latitude*Math.PI/180))));
+            windVelocity.setX((xWindVelocityCF + Math.random()*0.8*xWindVelocityCF)/ (-2 * angularVelocity * Math.sin(latitude*Math.PI/180)));
         }else{
            windVelocity.setX(xWindVelocityCF+ Math.random()*0.8*xWindVelocityCF);
         }
        
         yResultingPressure=(yPressureGradientForce/(4*Math.PI*Math.pow(titanRadius,2)))-yStartingPressure;
+        yResultingPressure=yResultingPressure+Math.random()*0.2*yResultingPressure;
         double yPressureDifference=yStartingPressure-yResultingPressure;
         yWindVelocityCF=(-1/atmosphereDensity)*(yPressureDifference/(2*Math.PI* titanRadius))*timeStep;
         if(latitude!=0) {
-             windVelocity.setY((yWindVelocityCF+Math.random()*0.8*xWindVelocityCF)/ (-2 * angularVelocity * Math.sin(latitude*Math.PI/180)));
+             windVelocity.setY((yWindVelocityCF +Math.random()*0.8*xWindVelocityCF)/ (-2 * angularVelocity * Math.sin(latitude*Math.PI/180)));
         }else{
             windVelocity.setY(yWindVelocityCF+Math.random()*0.8*xWindVelocityCF);
         }
-        return windVelocity;
+
     }
 
-    public Vector3D getPressure(){
-        Vector3D currentPressure= new Vector3D(xResultingPressure,yResultingPressure,0);
+    public Vector2D getPressure(){
+        Vector2D currentPressure= new Vector2D(xResultingPressure,yResultingPressure);
         return currentPressure;
     }
 
-    public Vector3D getDrag(double crossSectionalArea, double angleOfApproach){
-        Vector3D netPressure= getPressure();
-        Vector3D force= new Vector3D(netPressure.getX()*crossSectionalArea*Math.cos(angleOfApproach),netPressure.getY()*Math.sin(angleOfApproach)*crossSectionalArea,0);
+    public Vector2D getDrag(Vector2D positionOfCraft){
+        //Cross-sectional area relates to the area of a circle. Units m^2
+        double altitude=Math.sqrt(Math.pow(positionOfCraft.getX(),2)+Math.pow(positionOfCraft.getY(),2));
+        double height=(altitude-titanRadius)/10E3;
+        if(height<=ATMOSPHERE_HEIGHT && height>=0){
+            for (SpaceObject spaceObject : titanSystem) {
+                spaceObject.updateForce(titanSystem);
+                spaceObject.updateAcceleration();
+                spaceObject.updateVelocity(timeStep);
+                spaceObject.updatePosition(timeStep);
+
+            }
+            setAtmosphericDensity(height);
+            pressureGradientForce(titanSystem.get(1).getPosition().getX(), titanSystem.get(1).getPosition().getY(), titanSystem.get(1).getVelocity().getX(), titanSystem.get(1).getVelocity().getY());
+            windSpeed(xResultingPressure, yResultingPressure, 0);
+
+        double crossSectionalArea=Math.PI*Math.pow(6,2);
+        double angleOfApproach=Math.atan2(positionOfCraft.getY(), positionOfCraft.getX());
+        Vector2D netPressure= getPressure();
+        Vector2D force= new Vector2D(-netPressure.getX()*crossSectionalArea*Math.cos(angleOfApproach),-netPressure.getY()*Math.sin(angleOfApproach)*crossSectionalArea);
         return force;
-    }
+        }else{
+            Vector2D force=new Vector2D(0,0);
+            return force;
+        }
+    }        
 }

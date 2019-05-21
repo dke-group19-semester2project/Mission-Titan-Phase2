@@ -14,7 +14,6 @@ public class WindSpeedImplentationEx{
                 //Test data. 
                 position.setX(-2.56E6+10E3);
                 position.setY(-2.56E6);
-                
                 //Updates wind model and computes drag and lift.
                 //Drag is the x, lift is the y. 
                 Vector2D forces=titanWindSpeed.getDrag(position);
