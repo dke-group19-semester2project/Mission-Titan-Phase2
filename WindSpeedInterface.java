@@ -1,3 +1,3 @@
 public interface WindSpeedInterface {
-    public Vector2D getDrag(Vector2D positionOfCraft);
+    public Vector2D updateModelAndGetDrag(Vector2D positionOfCraft);
 }

@@ -62,7 +62,7 @@ public class SimulationBody {
         // F=ma => a=F/m
         Vector2D gravitationalForce = getForceAsVector(attractingBody);
         Vector2D drag = new Vector2D(0,0); // TODO: This is used instead of actual drag until we figure out the problem with drag from windspeed
-        //Vector2D drag = windSpeed.getDrag(position);
+        //Vector2D drag = windSpeed.updateModelAndGetDrag(position);
         Vector2D netForce = sumOf(gravitationalForce, drag);
         Vector2D acceleration = netForce.dividedBy(this.massInKg); // Force is divided by the mass of the accelerating body
         return acceleration;

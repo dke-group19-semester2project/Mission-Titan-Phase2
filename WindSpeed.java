@@ -81,7 +81,7 @@ public class WindSpeed implements WindSpeedInterface {
         return currentPressure;
     }
 
-    public Vector2D getDrag(Vector2D positionOfCraft){
+    public Vector2D updateModelAndGetDrag(Vector2D positionOfCraft){
         //Cross-sectional area relates to the area of a circle. Units m^2
         double altitude=Math.sqrt(Math.pow(positionOfCraft.getX(),2)+Math.pow(positionOfCraft.getY(),2));
         double height=(altitude-titanRadius)/10E3;
