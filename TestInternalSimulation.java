@@ -9,7 +9,6 @@ import java.util.function.Supplier;
 public class TestInternalSimulation extends JComponent{
     //public static final double G = 6.674E-11; // unit: m3⋅kg−1⋅s−2 (gravitational constant)
     private static double minDistance;
-    //private static int minDistanceTime;
     private static ArrayList<SimulationBody> bodies = new ArrayList<SimulationBody>();
     static TestInternalSimulation display;
     static double titanRadius = 2575*1000;
