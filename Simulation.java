@@ -28,19 +28,24 @@ public class Simulation {
     // display the frame in the main method
     Display display = new Display();
     static double titanRadius = 2575*1000;
-    static double startingDistance = titanRadius+800*1000;
-    static double probeMass = 5000;
+//    static double startingDistance = titanRadius+800*1000;
+//    static double probeMass = 5000;
     ControllerInterface controller;
-
-    public Simulation (ControllerInterface controller) {
+    SimulationBody titan;
+    SimulationBody probe;
+    public Simulation (ControllerInterface controller, SimulationBody titan, SimulationBody probe) {
         this.controller = controller;
+        this.titan = titan;
+        bodies.add(titan);
+        this.probe = probe;
+        bodies.add(probe);
     }
     public void run () { // Might want to change this method to e.g. run() and move the main method to a different class
         // TODO: The bodies below should ultimately be initialised with WindSpeedStochastic
-        SimulationBody titan = new SimulationBody(new Vector2D(0,0), new Vector2D(0,0), 1.3452E23, 2*titanRadius, new WindSpeed(1));
-        bodies.add(titan);
-        SimulationBody probe = new SimulationBody(new Vector2D(startingDistance,0), new Vector2D(0, 1600), 5000, 1, new WindSpeed(1));
-        bodies.add(probe);
+//        SimulationBody titan = new SimulationBody(new Vector2D(0,0), new Vector2D(0,0), 1.3452E23, 2*titanRadius, new WindSpeed(1));
+//        bodies.add(titan);
+//        SimulationBody probe = new SimulationBody(new Vector2D(startingDistance,0), new Vector2D(0, 1600), 5000, 1, new WindSpeed(1));
+//        bodies.add(probe);
 
         // GUI
         JFrame frame = new JFrame();
