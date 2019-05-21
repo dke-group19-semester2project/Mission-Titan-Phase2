@@ -6,16 +6,16 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
-public class LandingTest extends JComponent{
+public class InternalSimulation extends JComponent{
     public static final double G = 6.674E-11; // unit: m3⋅kg−1⋅s−2 (gravitational constant)
     private static double minDistance;
     private static int minDistanceTime;
     private static ArrayList<Body> bodies = new ArrayList<Body>();
-    static LandingTest display;
+    static InternalSimulation display;
     static double titanRadius = 2575*1000;
     static double startingDistance = titanRadius+800*1000;
     static double probeMass = 5000;
-    static double orbitalSpeed = Math.sqrt((G*probeMass)/startingDistance);
+    static double orbitalSpeed = Math.sqrt((G*probeMass)/(startingDistance-titanRadius));
     public static void main(String[] args) {
         // Set-up
         Body titan = new Body(new Vector2D(0,0), new Vector2D(0,0), 1.3452E23, 2*titanRadius);
@@ -24,7 +24,7 @@ public class LandingTest extends JComponent{
         bodies.add(probe);
 
         JFrame frame = new JFrame();
-        display = new LandingTest();
+        display = new InternalSimulation();
         frame.add(display);
         frame.setSize(800, 800);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -161,8 +161,10 @@ public class LandingTest extends JComponent{
         double maxLandingBurnFactor = 0.5;
         boolean hasLanded = false;
         Body titan = bodies.get(0);
-        Body probe = new Body(new Vector2D(startingDistance,0), new Vector2D(0, 1700), 5000, 1);
+        Body probe = new Body(new Vector2D(startingDistance,0), new Vector2D(0, 1600), 5000, 1);
         bodies.set(1, probe);
+        System.out.println("Starting position: " + probe.getPosition().toString());
+        System.out.println("Starting velocity: " + probe.getVelocity().toString());
         Vector2D probeStartPosition = probe.getPosition();
         Vector2D titanPosition = titan.getPosition();
         Vector2D deltaV = probe.getVelocity().multipliedBy(-deltaVFunction.get());
@@ -198,6 +200,7 @@ public class LandingTest extends JComponent{
                 hasLanded = true;
                 System.out.println("The probe has landed.");
                 System.out.println("Current distance: Probe\n" + newDistance);
+                System.out.println("Current position: Probe\n" + probe.getPosition().toString());
                 System.out.println("Current velocity: Probe\n" + probe.getVelocity().toString());
                 break;
             }
