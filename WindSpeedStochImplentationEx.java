@@ -1,8 +1,9 @@
 import java.lang.Math;
 import java.util.ArrayList;
 
-public class WindSpeedImplentationEx{
+public class WindSpeedStochImplentationEx{
     //Date starting on January 1,2000
+
     public static void main(String[] args){
         final double MISSION_DURATION=86400;
         final double TIME_STEP=1;//In seconds
@@ -11,20 +12,22 @@ public class WindSpeedImplentationEx{
         //Saturn is the center of this celestial system.
         Planet saturn = new Planet(0D,0D,0D,0D,0D,0D, 5.68E26,695);
 
+
         //Same as the solar system construct.
         ArrayList<SpaceObject> titanSystem= new ArrayList<SpaceObject>();
         titanSystem.add(saturn);
         titanSystem.add(titan);
 
         //Wind
-        WindSpeed titanWindSpeed= new WindSpeed(TIME_STEP);
+        WindSpeedStochastic titanWindSpeed= new WindSpeedStochastic(TIME_STEP);
         //Height is in km. This is the beginning of the outer atmosphere of Titan.
         double height=1400;
         titanWindSpeed.setAtmosphericDensity(height);
         //Position and velocity are in m/s for celestial bodies only.
         titanWindSpeed.pressureGradientForce(-7.769539650426797E+08,9.025640976089063E+08,-4.279217248263016E+03,-2.783704647125639E+03);
         //Initial condition for the wind model.
-        Vector3D check= titanWindSpeed.windSpeed(0,0,0); //pressure(Pa), latitude(degrees)
+        Vector3D check= titanWindSpeed.windSpeedStochastic(0,0,0); //pressure(Pa), latitude(degrees)
+    
 
         //Updates wind model.
         for (int i = 0; i<MISSION_DURATION; i++) {
@@ -36,18 +39,18 @@ public class WindSpeedImplentationEx{
                     spaceObject.updatePosition(TIME_STEP);
 
                 }
-                double distanceTravelled = 1;// In km
-                height = height - distanceTravelled;
-                titanWindSpeed.setAtmosphericDensity(height);
-                titanWindSpeed.pressureGradientForce(titanSystem.get(1).getPosition().getX(), titanSystem.get(1).getPosition().getY(), titanSystem.get(1).getVelocity().getX(), titanSystem.get(1).getVelocity().getY());
-                Vector3D pressure = titanWindSpeed.getPressure();
-                Vector3D check2 = titanWindSpeed.windSpeed(pressure.getX(), pressure.getY(), 0);
-                //Cross-sectional area relates to the area of a circle. Units m^2
-                double crossSectionalArea=Math.PI*Math.pow(6,2);
-                //Angle of approach should be in radians.
-                double angleOfApproach=Math.PI/4;
-                Vector3D forces=titanWindSpeed.getDrag(crossSectionalArea,angleOfApproach);
-                System.out.println(check2.getX() + " " + check2.getY());
+                    double distanceTravelled = 1;// In km
+                    height = height - distanceTravelled;
+                    titanWindSpeed.setAtmosphericDensity(height);
+                    titanWindSpeed.pressureGradientForce(titanSystem.get(1).getPosition().getX(), titanSystem.get(1).getPosition().getY(), titanSystem.get(1).getVelocity().getX(), titanSystem.get(1).getVelocity().getY());
+                    Vector3D pressure = titanWindSpeed.getPressure();
+                    Vector3D check2 = titanWindSpeed.windSpeedStochastic(pressure.getX(), pressure.getY(), 0);
+                    //Cross-sectional area relates to the area of a circle. Units m^2
+                    double crossSectionalArea=Math.PI*Math.pow(6,2);
+                    //Angle of approach should be in radians.
+                    double angleOfApproach=Math.PI/4;
+                    Vector3D forces=titanWindSpeed.getDrag(crossSectionalArea,angleOfApproach);
+                    System.out.println(check2.getX() + " " + check2.getY());
 
                 if(i%2==0) {
                     //To get the drag and lift. Drag is forces[0] and forces[1] is the lift.
@@ -58,4 +61,5 @@ public class WindSpeedImplentationEx{
             }
         }
     }
-}
+        }
+    

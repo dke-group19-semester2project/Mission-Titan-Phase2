@@ -1,4 +1,4 @@
-public class WindSpeed{
+public class WindSpeedStochastic{
     private double massSaturn=5.68E26;//(Units: kg)
     private double massTitan=1.342E23;// (Units: kg)
     private double atmosphereDensity;//Atmospheric density of the planet on which you want to calculate the wind speed. (Units: kg/m^3)
@@ -19,7 +19,7 @@ public class WindSpeed{
     /*Must have it output in km/s.
     Height must also be in km.*/
    
-    WindSpeed(double timeStep){
+    WindSpeedStochastic(double timeStep){
         this.timeStep=timeStep;
     }
 
@@ -43,25 +43,25 @@ public class WindSpeed{
         return atmosphereDensity;
     }
 
-    public Vector3D windSpeed(double xStartingPressure, double yStartingPressure, double latitude){
+    public Vector3D windSpeedStochastic(double xStartingPressure, double yStartingPressure, double latitude){
         Vector3D windVelocity= new Vector3D(0,0,0);
 
         xResultingPressure=(xPressureGradientForce/(4*Math.PI*Math.pow(titanRadius,2)))-xStartingPressure;
         double xPressureDifference=xStartingPressure-xResultingPressure;
         xWindVelocityCF=(-1/atmosphereDensity)*(xPressureDifference/(2*Math.PI* titanRadius))*timeStep;
         if(latitude!=0) {
-            windVelocity.setX((xWindVelocityCF / (-2 * angularVelocity * Math.sin(latitude*Math.PI/180))));
+            windVelocity.setX(((xWindVelocityCF +Math.random()*0.8*xWindVelocityCF) / (-2 * angularVelocity * Math.sin(latitude*Math.PI/180))));
         }else{
-           windVelocity.setX(xWindVelocityCF);
+           windVelocity.setX(xWindVelocityCF+ Math.random()*0.8*xWindVelocityCF);
         }
        
         yResultingPressure=(yPressureGradientForce/(4*Math.PI*Math.pow(titanRadius,2)))-yStartingPressure;
         double yPressureDifference=yStartingPressure-yResultingPressure;
         yWindVelocityCF=(-1/atmosphereDensity)*(yPressureDifference/(2*Math.PI* titanRadius))*timeStep;
         if(latitude!=0) {
-             windVelocity.setY((yWindVelocityCF / (-2 * angularVelocity * Math.sin(latitude*Math.PI/180))));
+             windVelocity.setY((yWindVelocityCF+Math.random()*0.8*xWindVelocityCF)/ (-2 * angularVelocity * Math.sin(latitude*Math.PI/180)));
         }else{
-            windVelocity.setY(yWindVelocityCF);
+            windVelocity.setY(yWindVelocityCF+Math.random()*0.8*xWindVelocityCF);
         }
         return windVelocity;
     }
