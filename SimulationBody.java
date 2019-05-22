@@ -6,7 +6,7 @@
  * The current model only models the acceleration and NOT the attitude of the probe (using torque).
  */
 
-public class SimulationBody {
+public class SimulationBody{
     public static final double G = 6.674E-11; // unit: m3⋅kg−1⋅s−2 (gravitational constant)
     private Vector2D position; // Cartesian coordinates as m values.
     private Vector2D velocity; // Cartesian coordinates as m/s.
@@ -58,11 +58,11 @@ public class SimulationBody {
     public Vector2D getChangeInPosition (Vector2D velocity, int time) {
         return velocity.multipliedBy(time);
     }
+    
     public Vector2D getAcceleration (SimulationBody attractingBody) {
         // F=ma => a=F/m
         Vector2D gravitationalForce = getForceAsVector(attractingBody);
-        Vector2D drag = new Vector2D(0,0); // TODO: This is used instead of actual drag until we figure out the problem with drag from windspeed
-        //Vector2D drag = windSpeed.updateModelAndGetDrag(position);
+        Vector2D drag = windSpeed.updateModelAndGetDrag(position,velocity);
         Vector2D netForce = sumOf(gravitationalForce, drag);
         Vector2D acceleration = netForce.dividedBy(this.massInKg); // Force is divided by the mass of the accelerating body
         return acceleration;

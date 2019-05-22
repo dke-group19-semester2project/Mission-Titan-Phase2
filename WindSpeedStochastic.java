@@ -57,23 +57,21 @@ public class WindSpeedStochastic implements WindSpeedInterface {
         Vector2D windVelocity= new Vector2D(0,0);
 
         xResultingPressure=(xPressureGradientForce/(4*Math.PI*Math.pow(titanRadius,2)))-xStartingPressure;
-        xResultingPressure=xResultingPressure+Math.random()*0.2*xResultingPressure;
         double xPressureDifference=xStartingPressure-xResultingPressure;
         xWindVelocityCF=(-1/atmosphereDensity)*(xPressureDifference/(2*Math.PI* titanRadius))*timeStep;
         if(latitude!=0) {
-            windVelocity.setX((xWindVelocityCF + Math.random()*0.8*xWindVelocityCF)/ (-2 * angularVelocity * Math.sin(latitude*Math.PI/180)));
+            xWindVelocityCF=(xWindVelocityCF + Math.random()*0.2*xWindVelocityCF)/ (-2 * angularVelocity * Math.sin(latitude*Math.PI/180));
         }else{
-           windVelocity.setX(xWindVelocityCF+ Math.random()*0.8*xWindVelocityCF);
+            xWindVelocityCF=xWindVelocityCF+ Math.random()*0.2*xWindVelocityCF;
         }
        
         yResultingPressure=(yPressureGradientForce/(4*Math.PI*Math.pow(titanRadius,2)))-yStartingPressure;
-        yResultingPressure=yResultingPressure+Math.random()*0.2*yResultingPressure;
         double yPressureDifference=yStartingPressure-yResultingPressure;
         yWindVelocityCF=(-1/atmosphereDensity)*(yPressureDifference/(2*Math.PI* titanRadius))*timeStep;
         if(latitude!=0) {
-             windVelocity.setY((yWindVelocityCF +Math.random()*0.8*xWindVelocityCF)/ (-2 * angularVelocity * Math.sin(latitude*Math.PI/180)));
+            yWindVelocityCF=(yWindVelocityCF +Math.random()*0.2*xWindVelocityCF)/ (-2 * angularVelocity * Math.sin(latitude*Math.PI/180));
         }else{
-            windVelocity.setY(yWindVelocityCF+Math.random()*0.8*xWindVelocityCF);
+            yWindVelocityCF= yWindVelocityCF+Math.random()*0.2*xWindVelocityCF;
         }
 
     }
@@ -83,7 +81,7 @@ public class WindSpeedStochastic implements WindSpeedInterface {
         return currentPressure;
     }
 
-    public Vector2D updateModelAndGetDrag(Vector2D positionOfCraft){
+    public Vector2D updateModelAndGetDrag(Vector2D positionOfCraft,Vector2D velocityOfCraft){
         //Cross-sectional area relates to the area of a circle. Units m^2
         double altitude=Math.sqrt(Math.pow(positionOfCraft.getX(),2)+Math.pow(positionOfCraft.getY(),2));
         double height=(altitude-titanRadius)/10E3;
@@ -98,11 +96,10 @@ public class WindSpeedStochastic implements WindSpeedInterface {
             setAtmosphericDensity(height);
             pressureGradientForce(titanSystem.get(1).getPosition().getX(), titanSystem.get(1).getPosition().getY(), titanSystem.get(1).getVelocity().getX(), titanSystem.get(1).getVelocity().getY());
             windSpeed(xResultingPressure, yResultingPressure, 0);
-
-        double crossSectionalArea=Math.PI*Math.pow(6,2);
-        double angleOfApproach=Math.atan2(positionOfCraft.getY(), positionOfCraft.getX());
-        Vector2D netPressure= getPressure();
-        Vector2D force= new Vector2D(-netPressure.getX()*crossSectionalArea*Math.cos(angleOfApproach),-netPressure.getY()*Math.sin(angleOfApproach)*crossSectionalArea);
+            double crossSectionalArea=Math.PI*Math.pow(6,2);
+            double angleOfApproach=Math.atan2(positionOfCraft.getY(), positionOfCraft.getX());
+            double coefficentDrag=0.2;//Titan's atmosphere has a reynold's number of 10^7. Cd of a sphere at 10^7 is 0.2. 
+            Vector2D force= new Vector2D((atmosphereDensity*Math.pow(xWindVelocityCF,2)*crossSectionalArea*Math.cos(angleOfApproach)*0.5*coefficentDrag),(atmosphereDensity*Math.pow(yWindVelocityCF,2)*crossSectionalArea*Math.sin(angleOfApproach)*0.5*coefficentDrag));
         return force;
         }else{
             Vector2D force=new Vector2D(0,0);

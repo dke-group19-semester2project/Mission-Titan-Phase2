@@ -9,12 +9,11 @@ public class WindSpeedImplentationEx{
         Vector2D position= new Vector2D(300, 400);
         for (int i = 0; i<MISSION_DURATION; i++) {
                 //Test data. 
-                position.setX(2.56E6);
+                position.setX(3.375E6);
                 position.setY(0);
                 //Updates wind model and computes drag and lift.
                 //Drag is the x, lift is the y. 
                 Vector2D forces=titanWindSpeed.updateModelAndGetDrag(position);
-                System.out.println(forces.getX() + " " + forces.getY());
             }
         }
     }

@@ -19,7 +19,7 @@ public class TestInternalSimulation extends JComponent{
         // Set-up
         SimulationBody titan = new SimulationBody(new Vector2D(0,0), new Vector2D(0,0), 1.3452E23, 2*titanRadius, new WindSpeed(1));
         bodies.add(titan);
-        SimulationBody probe = new SimulationBody(new Vector2D(8000000,0), new Vector2D(0, 100), 5000, 1, new WindSpeed(1));
+        SimulationBody probe = new SimulationBody(new Vector2D(8000000,0), new Vector2D(0, 100), 5000, 12, new WindSpeed(1));
         bodies.add(probe);
 
         JFrame frame = new JFrame();
@@ -72,8 +72,8 @@ public class TestInternalSimulation extends JComponent{
         SimulationBody titan = bodies.get(0);
         SimulationBody probe = new SimulationBody(new Vector2D(startingDistance,0), new Vector2D(0, 1600), 5000, 1, new WindSpeed(1));
         bodies.set(1, probe);
-        System.out.println("Starting position: " + probe.getPosition().toString());
-        System.out.println("Starting velocity: " + probe.getVelocity().toString());
+        //System.out.println("Starting position: " + probe.getPosition().toString());
+        //System.out.println("Starting velocity: " + probe.getVelocity().toString());
         Vector2D probeStartPosition = probe.getPosition();
         Vector2D titanPosition = titan.getPosition();
         Vector2D deltaV = probe.getVelocity().multipliedBy(-deltaVFunction.get());
@@ -106,13 +106,13 @@ public class TestInternalSimulation extends JComponent{
 
             double newDistance = probe.getDistanceFrom(titan);
             //System.out.println("Current distance: " + newDistance);
-            //System.out.println("Current velocity: " + probe.getVelocity().toString());
+            System.out.println("Current velocity: " + probe.getVelocity().toString());
             if (newDistance<=titanRadius) {
                 hasLanded = true;
                 System.out.println("The probe has landed.");
-                System.out.println("Current distance: Probe\n" + newDistance);
-                System.out.println("Current position: Probe\n" + probe.getPosition().toString());
-                System.out.println("Current velocity: Probe\n" + probe.getVelocity().toString());
+               // System.out.println("Current distance: Probe\n" + newDistance);
+                //System.out.println("Current position: Probe\n" + probe.getPosition().toString());
+                //System.out.println("Current velocity: Probe\n" + probe.getVelocity().toString());
                 break;
             }
         }
