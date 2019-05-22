@@ -18,6 +18,7 @@ public class WindSpeedStochImplentationEx{
              
              //Updates wind model and computes drag and lift.
              //Drag is the x, lift is the y. 
+             titanWindSpeed.setRandomParameter(0.2);//0 for most deterministic, 1 for the most random.
              Vector2D forces=titanWindSpeed.updateModelAndGetDrag(position,velocity);
              System.out.println(forces.getX() + " " + forces.getY());
             }

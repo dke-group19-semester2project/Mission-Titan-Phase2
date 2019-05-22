@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+
 public class WindSpeedStochastic implements WindSpeedInterface {
     private double massSaturn=5.68E26;//(Units: kg)
     private double massTitan=1.342E23;// (Units: kg)
@@ -17,6 +18,7 @@ public class WindSpeedStochastic implements WindSpeedInterface {
     private double atmosphericMass;//Units: kg
     private double conversionFactor=10E3; //Converts m/s to km/s for windspeed.
     private double timeStep;//How many seconds per calculation.
+    private double randomness;//How random the simulation will be. On a scale from 0-1. 0 is the most deterministic and 1 is the most variable.
     //Need to use position data of Titan, but relative to Saturn for simplicity.
     private Planet titan= new Planet(-7.769539650426797E+08,9.025640976089063E+08,-3.896658973030882E+08,-4.279217248263016E+03,-2.783704647125639E+03,1.856691783450268E+03,1.342E23,0);
     //Saturn is the center of this celestial system.
@@ -52,6 +54,13 @@ public class WindSpeedStochastic implements WindSpeedInterface {
     public double getAtmosphereDensity(){
         return atmosphereDensity;
     }
+    public void setRandomParameter(double randomness){
+        this.randomness=randomness;
+    }
+
+    public double getRandomParameter(){
+        return randomness;
+    }
 
     public void windSpeed(double xStartingPressure, double yStartingPressure, double latitude){
         Vector2D windVelocity= new Vector2D(0,0);
@@ -60,18 +69,18 @@ public class WindSpeedStochastic implements WindSpeedInterface {
         double xPressureDifference=xStartingPressure-xResultingPressure;
         xWindVelocityCF=(-1/atmosphereDensity)*(xPressureDifference/(2*Math.PI* titanRadius))*timeStep;
         if(latitude!=0) {
-            xWindVelocityCF=(xWindVelocityCF + Math.random()*0.2*xWindVelocityCF)/ (-2 * angularVelocity * Math.sin(latitude*Math.PI/180));
+            xWindVelocityCF=(xWindVelocityCF + Math.random()*randomness*xWindVelocityCF)/ (-2 * angularVelocity * Math.sin(latitude*Math.PI/180));
         }else{
-            xWindVelocityCF=xWindVelocityCF+ Math.random()*0.2*xWindVelocityCF;
+            xWindVelocityCF=xWindVelocityCF+ Math.random()*randomness*xWindVelocityCF;
         }
        
         yResultingPressure=(yPressureGradientForce/(4*Math.PI*Math.pow(titanRadius,2)))-yStartingPressure;
         double yPressureDifference=yStartingPressure-yResultingPressure;
         yWindVelocityCF=(-1/atmosphereDensity)*(yPressureDifference/(2*Math.PI* titanRadius))*timeStep;
         if(latitude!=0) {
-            yWindVelocityCF=(yWindVelocityCF +Math.random()*0.2*xWindVelocityCF)/ (-2 * angularVelocity * Math.sin(latitude*Math.PI/180));
+            yWindVelocityCF=(yWindVelocityCF +Math.random()*randomness*xWindVelocityCF)/ (-2 * angularVelocity * Math.sin(latitude*Math.PI/180));
         }else{
-            yWindVelocityCF= yWindVelocityCF+Math.random()*0.2*xWindVelocityCF;
+            yWindVelocityCF= yWindVelocityCF+Math.random()*randomness*xWindVelocityCF;
         }
 
     }
