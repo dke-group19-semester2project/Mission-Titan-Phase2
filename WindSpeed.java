@@ -108,5 +108,8 @@ public class WindSpeed implements WindSpeedInterface {
             Vector2D force=new Vector2D(0,0);
             return force;
         }
-    }        
+    }
+    public Vector2D getCurrentWindVelocity () {
+        return new Vector2D(xWindVelocityCF, yWindVelocityCF);
+    }
 }
