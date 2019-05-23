@@ -30,9 +30,9 @@ public class OLController implements ControllerInterface {
         probe.changeVelocityWithMainThrusters(deltaV);
         probe.updatePositionAndVelocity(1, titan);
     }
-    public Vector2D getDeltaV () {
+    public Vector2D updateAndGetDeltaV() {
         update(1);
-        // Might be worth calling the method update here, so that when the external simulation calls getDeltaV, the internal sim and deltaV will update.
+        // Might be worth calling the method update here, so that when the external simulation calls updateAndGetDeltaV, the internal sim and deltaV will update.
         return deltaV;
     }
     public ArrayList<SimulationBody> getBodies () {

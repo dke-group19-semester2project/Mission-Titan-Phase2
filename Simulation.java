@@ -1,7 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -62,7 +60,7 @@ public class Simulation {
 //        }
         boolean hasLanded = false;
         for (int i=0; i<60000; i++) {
-            Vector2D deltaV = controller.getDeltaV();
+            Vector2D deltaV = controller.updateAndGetDeltaV();
             probe.changeVelocityWithMainThrusters(deltaV);
             //System.out.println("Current deltaV: " + deltaV);
             probe.updatePositionAndVelocity(1, titan);

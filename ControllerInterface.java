@@ -1,4 +1,4 @@
 public interface ControllerInterface {
     public void update (int timeStep);
-    public Vector2D getDeltaV ();
+    public Vector2D updateAndGetDeltaV();
 }
