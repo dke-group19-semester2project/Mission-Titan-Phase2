@@ -22,4 +22,9 @@ public class RunSimulation {
         Simulation openLoopSim = new Simulation(new OLController(), titan, probe);
         openLoopSim.run();
     }
+    public static void displayClosedLoopSimulation () {
+        /*
+        TODO: Implement once feedback controller is available
+         */
+    }
 }
