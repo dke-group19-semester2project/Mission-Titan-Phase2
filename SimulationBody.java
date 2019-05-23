@@ -105,4 +105,7 @@ public class SimulationBody{
         Vector2D difference = new Vector2D(newX, newY);
         return difference;
     }
+    public WindSpeedInterface getWindSpeed () {
+        return windSpeed;
+    }
 }
