@@ -78,9 +78,9 @@ public class WindSpeedStochastic implements WindSpeedInterface {
         double yPressureDifference=yStartingPressure-yResultingPressure;
         yWindVelocityCF=(-1/atmosphereDensity)*(yPressureDifference/(2*Math.PI* titanRadius))*timeStep;
         if(latitude!=0) {
-            yWindVelocityCF=(yWindVelocityCF +Math.random()*randomness*xWindVelocityCF)/ (-2 * angularVelocity * Math.sin(latitude*Math.PI/180));
+            yWindVelocityCF=(yWindVelocityCF +Math.random()*randomness*yWindVelocityCF)/ (-2 * angularVelocity * Math.sin(latitude*Math.PI/180));
         }else{
-            yWindVelocityCF= yWindVelocityCF+Math.random()*randomness*xWindVelocityCF;
+            yWindVelocityCF= yWindVelocityCF+Math.random()*randomness*yWindVelocityCF;
         }
 
     }
