@@ -69,7 +69,7 @@ public class Simulation {
             if(i % 100 == 0) {
                 display.repaint();
                 try {
-                    TimeUnit.MILLISECONDS.sleep(20);
+                    TimeUnit.MILLISECONDS.sleep(50);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

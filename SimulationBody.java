@@ -1,8 +1,6 @@
 /**
  * This class is used to simulate Titan and the spacecraft orbiting Titan (in isolation from the rest of the solar system).
  * Titan is presumed as fixed at the origin (zero-velocity), while the spacecraft is orbiting with an initial velocity.
- * The trajectory can be calculated with an open-loop controller that takes the force of the thrusters as a parameter.
- * (For now the thrusters are only used to slow down the orbital velocity but later can be updated to ensure safe landing.)
  * The current model only models the acceleration and NOT the attitude of the probe (using torque).
  */
 

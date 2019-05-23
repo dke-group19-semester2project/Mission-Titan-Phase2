@@ -106,13 +106,13 @@ public class TestInternalSimulation extends JComponent{
 
             double newDistance = probe.getDistanceFrom(titan);
             //System.out.println("Current distance: " + newDistance);
-            System.out.println("Current velocity: " + probe.getVelocity().toString());
+            //System.out.println("Current velocity: " + probe.getVelocity().toString());
             if (newDistance<=titanRadius) {
                 hasLanded = true;
                 System.out.println("The probe has landed.");
                // System.out.println("Current distance: Probe\n" + newDistance);
                 //System.out.println("Current position: Probe\n" + probe.getPosition().toString());
-                //System.out.println("Current velocity: Probe\n" + probe.getVelocity().toString());
+                System.out.println("Current velocity: Probe\n" + probe.getVelocity().toString());
                 break;
             }
         }
