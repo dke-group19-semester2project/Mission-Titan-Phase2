@@ -1,7 +1,7 @@
 public class RunSimulation {
     public static void main(String[] args) {
-        //displayInternalSimulation();
-        displayOpenLoopSimulation();
+        displayInternalSimulation();
+        //displayOpenLoopSimulation();
 
     }
     public static void displayInternalSimulation () {
