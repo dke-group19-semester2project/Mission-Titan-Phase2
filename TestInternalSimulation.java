@@ -19,8 +19,6 @@ public class TestInternalSimulation extends JComponent{
         // Set-up
         SimulationBody titan = new SimulationBody(new Vector2D(0,0), new Vector2D(0,0), 1.3452E23, 2*titanRadius, new WindSpeed(1));
         bodies.add(titan);
-//        SimulationBody internalProbe = new SimulationBody(new Vector2D(8000000,0), new Vector2D(0, 100), 5000, 12, new WindSpeed(1));
-//        bodies.add(internalProbe);
 
         JFrame frame = new JFrame();
         display = new TestInternalSimulation();
