@@ -1,5 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -20,7 +23,7 @@ public class Simulation {
             }
             // TODO: Add a red X to the predicted landing location
             // TODO: Add a label displaying the wind velocity as an arrow and as x & y coordinates
-            Vector2D windVelocity = probe.getWindSpeed().getCurrentWindVelocity();
+            Vector2D windVelocity = realProbe.getWindSpeed().getCurrentWindVelocity();
             JLabel windLabel = new JLabel(windVelocity.toString());
 
         }
@@ -32,15 +35,15 @@ public class Simulation {
     static double titanRadius = 2575*1000;
     ControllerInterface controller;
     SimulationBody titan;
-    SimulationBody probe;
-    public Simulation (ControllerInterface controller, SimulationBody titan, SimulationBody realProbe) {
+    SimulationBody realProbe;
+    public Simulation (ControllerInterface controller, SimulationBody titan, SimulationBody probe) {
         this.controller = controller;
         this.titan = titan;
         bodies.add(titan);
-        this.probe = realProbe;
-        bodies.add(realProbe);
+        this.realProbe = probe;
+        bodies.add(probe);
     }
-    public void run () {
+    public void run () throws FileNotFoundException {
 
         // GUI
         JFrame frame = new JFrame();
@@ -49,11 +52,10 @@ public class Simulation {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
 
-        // Test 'external' simulation (which for now is actually the internal one)
         // TODO: Finish the for-loop below so that it does not mess with the deltaV calculations and is able to show a couple of rounds in orbit.
 //
 //        for (int i=0; i<60000; i++) {
-//            internalProbe.updatePositionAndVelocity(1, titan);
+//            realProbe.updatePositionAndVelocity(1, titan);
 //            if(i % 100 == 0) {
 //                display.repaint();
 //                try {
@@ -63,13 +65,25 @@ public class Simulation {
 //                }
 //            }
 //        }
+        String csvInternal = "internalVelocities.csv";
+        String csvExternal = "externalVelocities.csv";
+        StringBuilder internalData = new StringBuilder();
+        StringBuilder externalData = new StringBuilder();
+        PrintWriter internalVelocitiesToCSV = new PrintWriter(new File(csvInternal));
+        PrintWriter externalVelocitiesToCSV = new PrintWriter(new File(csvExternal));
+        final String QUOTATION = "\"";
+        final String COMMA_SEPARATOR = ",";
+        final String NEW_LINE = "\n";
+        //SimulationBody internalProbe = O
+
         boolean hasLanded = false;
         for (int i=0; i<60000; i++) {
+            externalData.append(QUOTATION + "Current position:" + realProbe.getPosition().toString() + QUOTATION + COMMA_SEPARATOR + NEW_LINE);
             Vector2D deltaV = controller.updateAndGetDeltaV();
-            probe.changeVelocityWithMainThrusters(deltaV);
+            realProbe.changeVelocityWithMainThrusters(deltaV);
             //System.out.println("Current deltaV: " + deltaV);
-            probe.updatePositionAndVelocity(1, titan);
-            Vector2D windVelocity = probe.getWindSpeed().getCurrentWindVelocity();
+            realProbe.updatePositionAndVelocity(1, titan);
+            Vector2D windVelocity = realProbe.getWindSpeed().getCurrentWindVelocity();
             System.out.println("Current wind velocity: " + windVelocity.toString());
             if(i % 100 == 0) {
                 display.repaint();
@@ -79,18 +93,23 @@ public class Simulation {
                     throw new RuntimeException(e);
                 }
             }
-            double newDistance = probe.getDistanceFrom(titan);
+            double newDistance = realProbe.getDistanceFrom(titan);
             //System.out.println("Current distance: " + newDistance);
-            //System.out.println("Current velocity: " + internalProbe.getVelocity().toString());
+            //System.out.println("Current velocity: " + realProbe.getVelocity().toString());
             if (newDistance<=titanRadius) {
                 hasLanded = true;
-                System.out.println("The internalProbe has landed.");
+                System.out.println("The realProbe has landed.");
                 System.out.println("Current distance: Probe\n" + newDistance);
-                System.out.println("Current position: Probe\n" + probe.getPosition().toString());
-                System.out.println("Current velocity: Probe\n" + probe.getVelocity().toString());
+                System.out.println("Current position: Probe\n" + realProbe.getPosition().toString());
+                System.out.println("Current velocity: Probe\n" + realProbe.getVelocity().toString());
                 break;
             }
         }
+
     }
+    public SimulationBody getRealProbe () {
+        return realProbe;
+    }
+
 }
 
