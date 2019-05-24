@@ -1,7 +1,7 @@
 /**
  * This class is used to simulate Titan and the spacecraft orbiting Titan (in isolation from the rest of the solar system).
  * Titan is presumed as fixed at the origin (zero-velocity), while the spacecraft is orbiting with an initial velocity.
- * The current model only models the acceleration and NOT the attitude of the probe (using torque).
+ * The current model only models the acceleration and NOT the attitude of the internalProbe (using torque).
  */
 
 public class SimulationBody{

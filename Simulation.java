@@ -18,6 +18,11 @@ public class Simulation {
                 int y = (int) position.y/ scale + 400 - size/2;
                 g2.fillOval(x, y, size, size);
             }
+            // TODO: Add a red X to the predicted landing location
+            // TODO: Add a label displaying the wind velocity as an arrow and as x & y coordinates
+            Vector2D windVelocity = probe.getWindSpeed().getCurrentWindVelocity();
+            JLabel windLabel = new JLabel(windVelocity.toString());
+
         }
     }
     // updates the "real" position and velocity of the spacecraft on the basis of: gravity, wind velocity, and deltaV from the Controller
@@ -28,12 +33,12 @@ public class Simulation {
     ControllerInterface controller;
     SimulationBody titan;
     SimulationBody probe;
-    public Simulation (ControllerInterface controller, SimulationBody titan, SimulationBody probe) {
+    public Simulation (ControllerInterface controller, SimulationBody titan, SimulationBody realProbe) {
         this.controller = controller;
         this.titan = titan;
         bodies.add(titan);
-        this.probe = probe;
-        bodies.add(probe);
+        this.probe = realProbe;
+        bodies.add(realProbe);
     }
     public void run () {
 
@@ -48,7 +53,7 @@ public class Simulation {
         // TODO: Finish the for-loop below so that it does not mess with the deltaV calculations and is able to show a couple of rounds in orbit.
 //
 //        for (int i=0; i<60000; i++) {
-//            probe.updatePositionAndVelocity(1, titan);
+//            internalProbe.updatePositionAndVelocity(1, titan);
 //            if(i % 100 == 0) {
 //                display.repaint();
 //                try {
@@ -76,10 +81,10 @@ public class Simulation {
             }
             double newDistance = probe.getDistanceFrom(titan);
             //System.out.println("Current distance: " + newDistance);
-            //System.out.println("Current velocity: " + probe.getVelocity().toString());
+            //System.out.println("Current velocity: " + internalProbe.getVelocity().toString());
             if (newDistance<=titanRadius) {
                 hasLanded = true;
-                System.out.println("The probe has landed.");
+                System.out.println("The internalProbe has landed.");
                 System.out.println("Current distance: Probe\n" + newDistance);
                 System.out.println("Current position: Probe\n" + probe.getPosition().toString());
                 System.out.println("Current velocity: Probe\n" + probe.getVelocity().toString());

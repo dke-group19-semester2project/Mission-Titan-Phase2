@@ -18,8 +18,8 @@ public class RunSimulation {
         final double startingDistance = titanRadius+800*1000;
         final double probeMass = 5000;
         SimulationBody titan = new SimulationBody(new Vector2D(0,0), new Vector2D(0,0), 1.3452E23, 2*titanRadius, new WindSpeedStochastic(1));
-        SimulationBody probe = new SimulationBody(new Vector2D(startingDistance,0), new Vector2D(0, 1600), 5000, 1, new WindSpeedStochastic(1));
-        Simulation openLoopSim = new Simulation(new OLController(), titan, probe);
+        SimulationBody realProbe = new SimulationBody(new Vector2D(startingDistance,0), new Vector2D(0, 1600), 5000, 1, new WindSpeedStochastic(1));
+        Simulation openLoopSim = new Simulation(new OLController(), titan, realProbe);
         openLoopSim.run();
     }
     public static void displayClosedLoopSimulation () {

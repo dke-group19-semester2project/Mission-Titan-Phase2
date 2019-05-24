@@ -19,8 +19,8 @@ public class TestInternalSimulation extends JComponent{
         // Set-up
         SimulationBody titan = new SimulationBody(new Vector2D(0,0), new Vector2D(0,0), 1.3452E23, 2*titanRadius, new WindSpeed(1));
         bodies.add(titan);
-        SimulationBody probe = new SimulationBody(new Vector2D(8000000,0), new Vector2D(0, 100), 5000, 12, new WindSpeed(1));
-        bodies.add(probe);
+//        SimulationBody internalProbe = new SimulationBody(new Vector2D(8000000,0), new Vector2D(0, 100), 5000, 12, new WindSpeed(1));
+//        bodies.add(internalProbe);
 
         JFrame frame = new JFrame();
         display = new TestInternalSimulation();
@@ -28,7 +28,7 @@ public class TestInternalSimulation extends JComponent{
         frame.setSize(800, 800);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
-        //Vector2D deltaV = probe.getVelocity().multipliedBy(0.5);
+        //Vector2D deltaV = internalProbe.getVelocity().multipliedBy(0.5);
         //testLandingDeltaV(deltaV, 1);
         //solveDeltaV(1);
         solveMultiplierAsFunctionOfDistance(1); /* This currently works as a combination of the two velocity methods. */
@@ -71,9 +71,9 @@ public class TestInternalSimulation extends JComponent{
         boolean hasLanded = false;
         SimulationBody titan = bodies.get(0);
         SimulationBody probe = new SimulationBody(new Vector2D(startingDistance,0), new Vector2D(0, 1600), 5000, 1, new WindSpeed(1));
-        bodies.set(1, probe);
-        //System.out.println("Starting position: " + probe.getPosition().toString());
-        //System.out.println("Starting velocity: " + probe.getVelocity().toString());
+        bodies.add(probe);
+        //System.out.println("Starting position: " + internalProbe.getPosition().toString());
+        //System.out.println("Starting velocity: " + internalProbe.getVelocity().toString());
         Vector2D probeStartPosition = probe.getPosition();
         Vector2D titanPosition = titan.getPosition();
         Vector2D deltaV = probe.getVelocity().multipliedBy(-deltaVFunction.get());
@@ -83,7 +83,7 @@ public class TestInternalSimulation extends JComponent{
             if (i%delayBetweenThrusterUse==0) {
                 double currentDistance = probe.getDistanceFrom(titan);
                 if (currentDistance<titanRadius+10*1000) {
-                    //System.out.println("Current velocity before landing burn: " + probe.getVelocity().toString());
+                    //System.out.println("Current velocity before landing burn: " + internalProbe.getVelocity().toString());
                     deltaV = probe.getVelocity().multipliedBy(-landingBurnFactor);
                     landingBurnFactor = (landingBurnFactor+maxLandingBurnFactor)/2;
                     //System.out.println("LandingBurnFactor: " + landingBurnFactor);
@@ -95,6 +95,8 @@ public class TestInternalSimulation extends JComponent{
 
             }
             probe.updatePositionAndVelocity(1, titan);
+            System.out.println("Current position: " + probe.getPosition().toString());
+            System.out.println("Current velocity: " + probe.getVelocity().toString());
             if(i % 100 == 0) {
                 display.repaint();
                 try {
@@ -106,12 +108,12 @@ public class TestInternalSimulation extends JComponent{
 
             double newDistance = probe.getDistanceFrom(titan);
             //System.out.println("Current distance: " + newDistance);
-            //System.out.println("Current velocity: " + probe.getVelocity().toString());
+            //System.out.println("Current velocity: " + internalProbe.getVelocity().toString());
             if (newDistance<=titanRadius) {
                 hasLanded = true;
-                System.out.println("The probe has landed.");
+                System.out.println("The internalProbe has landed.");
                // System.out.println("Current distance: Probe\n" + newDistance);
-                //System.out.println("Current position: Probe\n" + probe.getPosition().toString());
+                //System.out.println("Current position: Probe\n" + internalProbe.getPosition().toString());
                 System.out.println("Current velocity: Probe\n" + probe.getVelocity().toString());
                 break;
             }
