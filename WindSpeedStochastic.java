@@ -13,12 +13,11 @@ public class WindSpeedStochastic implements WindSpeedInterface {
     private double xWindVelocityCF;//x-Component of wind velocity above 800m (Units: m/s)
     private double yWindVelocityCF;//y-Component of wind velocity above 800m (Units: m/s)
     private double gravitationalConstant = 6.67408E-11; //m^3/kg*s^2
-    private double atmosphereHeight=1500E3;//Units: m
-    private double titanRadius=2.56E6;//Units: m
+    private double titanRadius=2.575E6;//Units: m
     private double atmosphericMass;//Units: kg
     private double conversionFactor=10E3; //Converts m/s to km/s for windspeed.
     private double timeStep;//How many seconds per calculation.
-    private double randomness;//How random the simulation will be. On a scale from 0-1. 0 is the most deterministic and 1 is the most variable.
+    private double randomness=0.5;//How random the simulation will be. On a scale from 0-1. 0 is the most deterministic and 1 is the most variable.
     //Need to use position data of Titan, but relative to Saturn for simplicity.
     private Planet titan= new Planet(-7.769539650426797E+08,9.025640976089063E+08,-3.896658973030882E+08,-4.279217248263016E+03,-2.783704647125639E+03,1.856691783450268E+03,1.342E23,0);
     //Saturn is the center of this celestial system.
@@ -31,6 +30,7 @@ public class WindSpeedStochastic implements WindSpeedInterface {
         titanSystem.add(saturn);
         titanSystem.add(titan);
         setAtmosphericDensity(ATMOSPHERE_HEIGHT);
+        setAtmosphericMass();
         //Position information of Titan and Saturn on January 1, 2000
         pressureGradientForce(-7.769539650426797E+08,9.025640976089063E+08,-4.279217248263016E+03,-2.783704647125639E+03);
     }
@@ -47,7 +47,7 @@ public class WindSpeedStochastic implements WindSpeedInterface {
     public void setAtmosphericMass(){
         //Unsure if this is used. Wait until I implement the thermal profile, if I get there.
         double volumeOfTargetBody=(4/3)*Math.PI*Math.pow(titanRadius,3);
-        double volumeOfAtmosphere=(4/3)*Math.PI*Math.pow(titanRadius +atmosphereHeight,3);
+        double volumeOfAtmosphere=(4/3)*Math.PI*Math.pow(titanRadius +ATMOSPHERE_HEIGHT,3);
         atmosphericMass=atmosphereDensity*(volumeOfAtmosphere-volumeOfTargetBody);
     }
 
@@ -108,7 +108,7 @@ public class WindSpeedStochastic implements WindSpeedInterface {
             double crossSectionalArea=Math.PI*Math.pow(6,2);
             double angleOfApproach=Math.atan2(positionOfCraft.getY(), positionOfCraft.getX());
             double dragCoefficient=0.2;//Titan's atmosphere has a reynold's number of 10^7. Cd of a sphere at 10^7 is 0.2.
-            Vector2D force= new Vector2D((atmosphereDensity*Math.pow(xWindVelocityCF,2)*crossSectionalArea*Math.cos(angleOfApproach)*0.5*dragCoefficient),(atmosphereDensity*Math.pow(yWindVelocityCF,2)*crossSectionalArea*Math.sin(angleOfApproach)*0.5*dragCoefficient));
+            Vector2D force= new Vector2D((atmosphereDensity*Math.pow(xWindVelocityCF,2)*crossSectionalArea*Math.cos(angleOfApproach)*0.5*dragCoefficient),(atmosphereDensity*Math.pow(yWindVelocityCF,2)*Math.sin(angleOfApproach)*0.5*dragCoefficient));
         return force;
         }else{
             Vector2D force=new Vector2D(0,0);
