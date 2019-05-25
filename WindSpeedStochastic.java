@@ -108,7 +108,7 @@ public class WindSpeedStochastic implements WindSpeedInterface {
             double crossSectionalArea=Math.PI*Math.pow(6,2);
             double angleOfApproach=Math.atan2(positionOfCraft.getY(), positionOfCraft.getX());
             double dragCoefficient=0.2;//Titan's atmosphere has a reynold's number of 10^7. Cd of a sphere at 10^7 is 0.2.
-            Vector2D force= new Vector2D((atmosphereDensity*Math.pow(xWindVelocityCF,2)*crossSectionalArea*Math.cos(angleOfApproach)*0.5*dragCoefficient),(atmosphereDensity*Math.pow(yWindVelocityCF,2)*Math.sin(angleOfApproach)*0.5*dragCoefficient));
+            Vector2D force= new Vector2D((atmosphereDensity*Math.pow(xWindVelocityCF,2)*crossSectionalArea*Math.cos(angleOfApproach)*0.5*dragCoefficient),(atmosphereDensity*Math.pow(yWindVelocityCF,2)*crossSectionalArea*Math.sin(angleOfApproach)*0.5*dragCoefficient));
         return force;
         }else{
             Vector2D force=new Vector2D(0,0);
