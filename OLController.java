@@ -23,6 +23,9 @@ public class OLController implements ControllerInterface {
     public void update (int timeStep) {
         // Adjust deltaV and apply it to the velocity in internal simulation, update the internal simulation body/ies by the time step
         double currentDistance = internalProbe.getDistanceFrom(titan);
+        inverseDistance = 1/ internalProbe.getDistanceFrom(titan);
+        deltaVMultiplier = Math.pow(constantMultiplier*inverseDistance,2);
+        deltaV = internalProbe.getVelocity().multipliedBy(-deltaVMultiplier);
         if (currentDistance<titanRadius+10*1000) {
             deltaV = internalProbe.getVelocity().multipliedBy(-landingBurnFactor);
             landingBurnFactor = (landingBurnFactor+maxLandingBurnFactor)/2;

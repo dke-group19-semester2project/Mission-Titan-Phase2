@@ -43,7 +43,7 @@ public class Simulation {
         this.realProbe = probe;
         bodies.add(probe);
     }
-    public void run () throws FileNotFoundException {
+    public void run () {
 
         // GUI
         JFrame frame = new JFrame();
@@ -65,20 +65,20 @@ public class Simulation {
 //                }
 //            }
 //        }
-        String csvInternal = "internalVelocities.csv";
-        String csvExternal = "externalVelocities.csv";
-        StringBuilder internalData = new StringBuilder();
-        StringBuilder externalData = new StringBuilder();
-        PrintWriter internalVelocitiesToCSV = new PrintWriter(new File(csvInternal));
-        PrintWriter externalVelocitiesToCSV = new PrintWriter(new File(csvExternal));
-        final String QUOTATION = "\"";
-        final String COMMA_SEPARATOR = ",";
-        final String NEW_LINE = "\n";
+//        String csvInternal = "internalVelocities.csv";
+//        String csvExternal = "externalVelocities.csv";
+//        StringBuilder internalData = new StringBuilder();
+//        StringBuilder externalData = new StringBuilder();
+//        PrintWriter internalVelocitiesToCSV = new PrintWriter(new File(csvInternal));
+//        PrintWriter externalVelocitiesToCSV = new PrintWriter(new File(csvExternal));
+//        final String QUOTATION = "\"";
+//        final String COMMA_SEPARATOR = ",";
+//        final String NEW_LINE = "\n";
         //SimulationBody internalProbe = O
 
         boolean hasLanded = false;
         for (int i=0; i<60000; i++) {
-            externalData.append(QUOTATION + "Current position:" + realProbe.getPosition().toString() + QUOTATION + COMMA_SEPARATOR + NEW_LINE);
+//            externalData.append(QUOTATION + "Current position:" + realProbe.getPosition().toString() + QUOTATION + COMMA_SEPARATOR + NEW_LINE);
             Vector2D deltaV = controller.updateAndGetDeltaV();
             realProbe.changeVelocityWithMainThrusters(deltaV);
             //System.out.println("Current deltaV: " + deltaV);

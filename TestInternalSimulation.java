@@ -87,18 +87,19 @@ public class TestInternalSimulation extends JComponent{
                     //System.out.println("LandingBurnFactor: " + landingBurnFactor);
                     probe.changeVelocityWithMainThrusters(deltaV);
                 } else {
-                    probe.changeVelocityWithMainThrusters(deltaV);
                     deltaV = probe.getVelocity().multipliedBy(-deltaVFunction.get());
+                    probe.changeVelocityWithMainThrusters(deltaV);
+
                 }
 
             }
             probe.updatePositionAndVelocity(1, titan);
-            System.out.println("Current position: " + probe.getPosition().toString());
-            System.out.println("Current velocity: " + probe.getVelocity().toString());
+            //System.out.println("Current position: " + probe.getPosition().toString());
+            //System.out.println("Current velocity: " + probe.getVelocity().toString());
             if(i % 100 == 0) {
                 display.repaint();
                 try {
-                    TimeUnit.MILLISECONDS.sleep(20);
+                    TimeUnit.MILLISECONDS.sleep(50);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
