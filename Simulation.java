@@ -84,7 +84,7 @@ public class Simulation {
             //System.out.println("Current deltaV: " + deltaV);
             realProbe.updatePositionAndVelocity(1, titan);
             Vector2D windVelocity = realProbe.getWindSpeed().getCurrentWindVelocity();
-            System.out.println("Current wind velocity: " + windVelocity.toString());
+            //System.out.println("Current wind velocity: " + windVelocity.toString());
             if(i % 100 == 0) {
                 display.repaint();
                 try {
