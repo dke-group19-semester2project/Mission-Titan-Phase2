@@ -19,6 +19,9 @@ public class Vector3D {
         result.z = this.z + vector3D.z;
         return result;
     }
+    public Vector3D addConstant(double d) {
+        return new Vector3D(this.x + d, this.y + d, this.z + d);
+    }
 
     public Vector3D multiplyVector(Vector3D vector3D) {
         Vector3D result = new Vector3D(0,0,0);
@@ -51,6 +54,16 @@ public class Vector3D {
         result.y = this.y- vector3D.y;
         result.z = this.z- vector3D.z;
         return result;
+    }
+    public Vector3D substractConstant(double d) {
+        return new Vector3D(this.x - d, this.y - d, this.z - d);
+    }
+    public Vector3D divideVector(Vector3D v) {
+        return new Vector3D(this.x / v.x, this.y / v.y, this.z / v.z);
+    }
+
+    public Vector3D divideConstant(double d) {
+        return new Vector3D(this.x / d, this.y / d, this.z / d);
     }
 
     @Override
