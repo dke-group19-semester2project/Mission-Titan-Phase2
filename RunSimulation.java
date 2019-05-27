@@ -1,9 +1,9 @@
 public class RunSimulation {
     public static void main(String[] args) {
-        //displayInternalSimulation();
+        displayInternalSimulation();
 
 //        for (int i = 0; i<1000; i++) {
-            displayOpenLoopSimulation();
+           // displayOpenLoopSimulation();
 //        }
 
 

@@ -20,7 +20,7 @@ public class OLController implements ControllerInterface {
         bodies.add(internalProbe);
 
     }
-    public void update (int timeStep, Simulation sim) {
+    public Vector2D update (int timeStep, Simulation sim) {
         // Adjust deltaV and apply it to the velocity in internal simulation, update the internal simulation body/ies by the time step
         double currentDistance = internalProbe.getDistanceFrom(titan);
         inverseDistance = 1/ internalProbe.getDistanceFrom(titan);
@@ -36,6 +36,7 @@ public class OLController implements ControllerInterface {
         }
         internalProbe.changeVelocityWithMainThrusters(deltaV);
         internalProbe.updatePositionAndVelocity(1, titan);
+        return deltaV;
     }
     private double computeCurrentSpeed () {
         Vector2D currentVelocity = internalProbe.getVelocity();
@@ -43,9 +44,9 @@ public class OLController implements ControllerInterface {
         return speed;
     }
     public Vector2D updateAndGetDeltaV(Simulation realSim) { // Simulation realSim is not needed by the OL controller. However, the feedback one needs it.
-        update(1, realSim);
+        Vector2D deltaVupdated = update(1, realSim);
         // Might be worth calling the method update here, so that when the external simulation calls updateAndGetDeltaV, the internal sim and deltaV will update.
-        return deltaV;
+        return deltaVupdated;
     }
     public Vector2D convertDeltaVToForce (Vector2D deltaV) {
         // F = m*a/t = m*deltaV (since t=1)
