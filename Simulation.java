@@ -104,7 +104,7 @@ public class Simulation {
         for (int i=0; i<60000; i++) {
             printCounter++;
 //            externalData.append(QUOTATION + "Current position:" + realProbe.getPosition().toString() + QUOTATION + COMMA_SEPARATOR + NEW_LINE);
-            Vector2D deltaV = controller.updateAndGetDeltaV();
+            Vector2D deltaV = controller.updateAndGetDeltaV(this);
             realProbe.changeVelocityWithMainThrusters(deltaV);
             int currentForceMagnitude = (int) controller.convertDeltaVToForceMagnitude(deltaV);
             //if (printCounter%200==0) {

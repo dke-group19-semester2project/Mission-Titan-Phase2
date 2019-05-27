@@ -24,8 +24,11 @@ public class RunSimulation {
         final double probeMass = 5000;
         WindSpeedInterface stochasticWind = new WindSpeedStochastic(1);
         ((WindSpeedStochastic) stochasticWind).setRandomParameter(0.5);
-        SimulationBody titan = new SimulationBody(new Vector2D(0,0), new Vector2D(0,0), 1.3452E23, 2*titanRadius, new WindSpeedStochastic(1));
-        SimulationBody realProbe = new SimulationBody(new Vector2D(startingDistance,0), new Vector2D(0, 1600), 5000, 1, stochasticWind);
+        SimulationBody titan = new SimulationBody(new Vector2D(0,0), new Vector2D(0,0),
+                                        1.3452E23, 2*titanRadius,
+                                        new WindSpeedStochastic(1));
+        SimulationBody realProbe = new SimulationBody(new Vector2D(startingDistance,0), new Vector2D(0, 1600),
+                                        5000, 1, stochasticWind);
         Simulation openLoopSim = new Simulation(new OLController(), titan, realProbe);
         openLoopSim.run();
     }

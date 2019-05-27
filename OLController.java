@@ -42,7 +42,7 @@ public class OLController implements ControllerInterface {
         double speed = Math.sqrt(currentVelocity.x*currentVelocity.x + currentVelocity.y*currentVelocity.y);
         return speed;
     }
-    public Vector2D updateAndGetDeltaV() {
+    public Vector2D updateAndGetDeltaV(Simulation realSim) { // Simulation realSim is not needed by the OL controller. However, the feedback one needs it.
         update(1);
         // Might be worth calling the method update here, so that when the external simulation calls updateAndGetDeltaV, the internal sim and deltaV will update.
         return deltaV;
