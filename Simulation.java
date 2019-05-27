@@ -35,12 +35,24 @@ public class Simulation {
             Vector2D windVelocity = realProbe.getWindSpeed().getCurrentWindVelocity();
             double windSpeed = Math.sqrt(windVelocity.x*windVelocity.x + windVelocity.y*windVelocity.y);
             String windString = "Current wind speed: \n" + (int) windSpeed + " m/s.";
-            String windString2 = "Wind direction: ";
+            //String windString2 = "Wind direction: ";
+            Vector2D currentVelocity = realProbe.getVelocity();
+            double currentSpeed = Math.sqrt(currentVelocity.x*currentVelocity.x + currentVelocity.y*currentVelocity.y);
+            String speedString = "Current speed of the lander: " + (int) currentSpeed + " m/s.";
+            Vector2D currentPosition = realProbe.getPosition();
+            double currentX = currentPosition.x;
+            double currentY = currentPosition.y;
+            String positionString = "Current position: X = " + (int) currentX + ", Y = " + (int) currentY;
+            String landedString = "The probe has landed!";
 
             g2.setColor(Color.BLACK);
 
             g2.drawString(windString, 800, 100);
-            g2.drawString(windString2, 800, 150);
+            g2.drawString(speedString, 800, 150);
+            g2.drawString(positionString, 800, 200);
+            if (hasLanded) {
+                g2.drawString(landedString, 800, 300);
+            }
 
             // TODO: Add a red X to the predicted landing location
             // TODO: Add a label displaying the wind velocity as an arrow and as x & y coordinates
@@ -57,6 +69,7 @@ public class Simulation {
     ControllerInterface controller;
     SimulationBody titan;
     SimulationBody realProbe;
+    boolean hasLanded = false;
     public Simulation (ControllerInterface controller, SimulationBody titan, SimulationBody probe) {
         this.controller = controller;
         this.titan = titan;
@@ -99,7 +112,7 @@ public class Simulation {
 //        }
 
 
-        boolean hasLanded = false;
+        //boolean hasLanded = false;
         int printCounter = 0;
         for (int i=0; i<60000; i++) {
             printCounter++;
@@ -135,7 +148,7 @@ public class Simulation {
                 Vector2D currentVelocity = realProbe.getVelocity();
                 System.out.println("Current velocity: \n" + currentVelocity.toString());
                 double currentSpeed = Math.sqrt(currentVelocity.x*currentVelocity.x + currentVelocity.y*currentVelocity.y);
-                System.out.println("Current speed: \n" + currentSpeed);
+                //System.out.println("Current speed: \n" + currentSpeed);
                 if (Math.abs(currentVelocity.x)<=7 && Math.abs(currentVelocity.y)<=7) {
                     //System.out.println("Safe landing!");
                 }
