@@ -108,7 +108,7 @@ public class Simulation {
             realProbe.changeVelocityWithMainThrusters(deltaV);
             int currentForceMagnitude = (int) controller.convertDeltaVToForceMagnitude(deltaV);
             //if (printCounter%200==0) {
-                System.out.println(/*"Current thruster force magnitude: \n" + */ currentForceMagnitude);
+                //System.out.println(/*"Current thruster force magnitude: \n" + */ currentForceMagnitude);
             //}
 
 //            double deltaVMagnitude = Math.sqrt(deltaV.x*deltaV.x + deltaV.y+deltaV.y);
