@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.text.StyledEditorKit;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,21 +11,41 @@ public class Simulation {
 
     private static ArrayList<SimulationBody> bodies = new ArrayList<SimulationBody>();
     class Display extends JComponent {
+        Vector2D predictedLandingSpot = new Vector2D(-2557051, -303503);
         public void paintComponent (Graphics g) {
             Graphics2D g2 = (Graphics2D) g;
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+            int scale = 16000;
             for (SimulationBody body: bodies) {
                 Vector2D position = body.getPosition();
-                int scale = 16000;
                 int size = Math.max(10, (int)body.getDiameter() / scale);
                 int x = (int) position.x/ scale + 400 - size/2;
                 int y = (int) position.y/ scale + 400 - size/2;
                 g2.fillOval(x, y, size, size);
             }
+            int predictedX = (int) predictedLandingSpot.x/scale + 396;
+            int predictedY = (int) predictedLandingSpot.y/scale + 406;
+            g2.setColor(Color.RED);
+            g2.setStroke(new BasicStroke(20));
+            char[] c = {'X'};
+            Font font = new Font("Courier", Font.BOLD,20);
+            g2.setFont(font);
+            g2.drawChars(c, 0, 1, predictedX, predictedY);
+            //g2.fillOval(predictedX, predictedY, 8, 8);
+            Vector2D windVelocity = realProbe.getWindSpeed().getCurrentWindVelocity();
+            double windSpeed = Math.sqrt(windVelocity.x*windVelocity.x + windVelocity.y*windVelocity.y);
+            String windString = "Current wind speed: \n" + (int) windSpeed + " m/s.";
+            String windString2 = "Wind direction: ";
+
+            g2.setColor(Color.BLACK);
+
+            g2.drawString(windString, 800, 100);
+            g2.drawString(windString2, 800, 150);
+
             // TODO: Add a red X to the predicted landing location
             // TODO: Add a label displaying the wind velocity as an arrow and as x & y coordinates
-            Vector2D windVelocity = realProbe.getWindSpeed().getCurrentWindVelocity();
-            JLabel windLabel = new JLabel(windVelocity.toString());
+            //Vector2D windVelocity = realProbe.getWindSpeed().getCurrentWindVelocity();
+            //JLabel windLabel = new JLabel(windVelocity.toString());
 
         }
     }
@@ -47,8 +68,19 @@ public class Simulation {
 
         // GUI
         JFrame frame = new JFrame();
-        frame.add(display);
-        frame.setSize(800, 800);
+        JPanel panel = new JPanel();
+//        GridLayout grid = new GridLayout(0,0);
+//        panel.setLayout(grid);
+//        panel.add(display);
+        Vector2D windVelocity = realProbe.getWindSpeed().getCurrentWindVelocity();
+        // TODO: make an event listener that changes the wind velocity label
+//        double windSpeed = Math.sqrt(windVelocity.x*windVelocity.x + windVelocity.y*windVelocity.y);
+//        JLabel label = new JLabel("Current wind speed: \n" + windSpeed);
+//        panel.add(label);
+
+
+        frame.add(display  );
+        frame.setSize(1400, 1000);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
 
@@ -65,25 +97,24 @@ public class Simulation {
 //                }
 //            }
 //        }
-//        String csvInternal = "internalVelocities.csv";
-//        String csvExternal = "externalVelocities.csv";
-//        StringBuilder internalData = new StringBuilder();
-//        StringBuilder externalData = new StringBuilder();
-//        PrintWriter internalVelocitiesToCSV = new PrintWriter(new File(csvInternal));
-//        PrintWriter externalVelocitiesToCSV = new PrintWriter(new File(csvExternal));
-//        final String QUOTATION = "\"";
-//        final String COMMA_SEPARATOR = ",";
-//        final String NEW_LINE = "\n";
-        //SimulationBody internalProbe = O
+
 
         boolean hasLanded = false;
+        int printCounter = 0;
         for (int i=0; i<60000; i++) {
+            printCounter++;
 //            externalData.append(QUOTATION + "Current position:" + realProbe.getPosition().toString() + QUOTATION + COMMA_SEPARATOR + NEW_LINE);
             Vector2D deltaV = controller.updateAndGetDeltaV();
             realProbe.changeVelocityWithMainThrusters(deltaV);
-            //System.out.println("Current deltaV: " + deltaV);
+            int currentForceMagnitude = (int) controller.convertDeltaVToForceMagnitude(deltaV);
+            //if (printCounter%200==0) {
+                System.out.println(/*"Current thruster force magnitude: \n" + */ currentForceMagnitude);
+            //}
+
+//            double deltaVMagnitude = Math.sqrt(deltaV.x*deltaV.x + deltaV.y+deltaV.y);
+//            System.out.println("Current deltaVMagnitude: \n" + deltaVMagnitude);
             realProbe.updatePositionAndVelocity(1, titan);
-            Vector2D windVelocity = realProbe.getWindSpeed().getCurrentWindVelocity();
+            windVelocity = realProbe.getWindSpeed().getCurrentWindVelocity();
             //System.out.println("Current wind velocity: " + windVelocity.toString());
             if(i % 100 == 0) {
                 display.repaint();
@@ -99,11 +130,20 @@ public class Simulation {
             if (newDistance<=titanRadius) {
                 hasLanded = true;
                 System.out.println("The realProbe has landed.");
-                System.out.println("Current distance: Probe\n" + newDistance);
-                System.out.println("Current position: Probe\n" + realProbe.getPosition().toString());
-                System.out.println("Current velocity: Probe\n" + realProbe.getVelocity().toString());
+                System.out.println("Current distance: \n" + newDistance);
+                System.out.println("Current position: \n" + realProbe.getPosition().toString());
+                Vector2D currentVelocity = realProbe.getVelocity();
+                System.out.println("Current velocity: \n" + currentVelocity.toString());
+                double currentSpeed = Math.sqrt(currentVelocity.x*currentVelocity.x + currentVelocity.y*currentVelocity.y);
+                System.out.println("Current speed: \n" + currentSpeed);
+                if (Math.abs(currentVelocity.x)<=7 && Math.abs(currentVelocity.y)<=7) {
+                    //System.out.println("Safe landing!");
+                }
                 break;
             }
+        }
+        if (!hasLanded) {
+            System.out.println("Did not manage to land within 30 s.");
         }
 
     }
