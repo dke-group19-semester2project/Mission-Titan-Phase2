@@ -53,6 +53,11 @@ public class TorqueTry{
     {
         this.thrust=thrust;
     }
+    public Vector2D netThrust(){
+        if(this.useLeftThrusters () && this.useRightThrusters ()){
+            return this.leftThrustAction ().add (this.rightThrustAction ());
+        }
+    }
 
     public void useLeftThrusters (){
         oldAngle=angle;
