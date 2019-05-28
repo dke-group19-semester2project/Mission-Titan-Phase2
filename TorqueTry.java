@@ -6,37 +6,21 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class TorqueTry extends JComponent {
+public class TorqueTry{
     private double force;
     private double angularVelocity;
     private double angularAcceleration;
     private double position;
-    private double angle;
+    private double angle=0;
+    private double oldAngle;
+    private TestBody object;
+    private double thrust;
+    static double titanRadius = 2575*1000;
     //distance are in meters
-    private final double radius =6;
-    public static void main(String[]args){
-        JFrame frame = new JFrame ();
-        TorqueTry movingSpaceCraft = new TorqueTry ();
-        class CalculateListener implements ActionListener {
-            public void actionPerformed(ActionEvent event) {
-                double rate = Double.parseDouble(rateField.getText());
-                account.deposit((account.getBalance()*rate/100));
-                textArea.append(account.getBalance() + "\n");
-        }
-        }
-        ActionListener listener = new CalculateListener();
-        frame.add(movingSpaceCraft);
-        frame.setSize ( 800,800 );
-        frame.setDefaultCloseOperation (WindowConstants.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-    }
-    public void paintComponent (Graphics g){
-        Graphics2D g2 = (Graphics2D) g;
-        // Construct a rectangle and draw it
-        Rectangle box = new Rectangle(5, 10, 20, 30);
-        box.(395, 395);
-        g2.draw(box);
+    private final double radius=6;
 
+    TorqueTry(TestBody object){
+        this.object=object;
     }
     /*
     public double updatedAngle (double force,double angle){
@@ -61,54 +45,37 @@ public class TorqueTry extends JComponent {
 
 
     //reference for the power of the thrusters
-    public void leftThrust()
+   /*private float calculateTorque() {
+        var distToCOM = shape.localCOM.mul( -1.0);
+        return distToCOM.x * thrustDir.y - radius * thrustDir.x;
+    }*/
+    public void setThrust(double thrust)
     {
-        oldAngle=angle;
-        angle += Math.PI / 180;
-
-        //rotation around the barycenter
-        spaceCraft.transform(new Affine(new Rotate(Spacecraft.leftThrust, x, y)));
-
-    }
-    public void useLeftThrusters (double force){
-        oldAngle=angle;
-        angle += Math.PI / 180;
-        spaceCraft.transform(new Affine(new Rotate(Spacecraft.leftThrust, x, y)));
-    }
-    public void useLeftThrusters (double force){
-        oldAngle=angle;
-        angle -= Math.PI / 180;
-        spaceCraft.transform(new Affine(new Rotate(Spacecraft.rightThrust, x, y)));
-    }
-    public void leftThrustAction()
-    {
-        double a = //value of the engine
-        double vel=a* //a timestep;
-        double distance = vel*// a timestep;
-        double dX = Math.sin(-(angle + (Math.PI/2)))*distance;
-        double dY = Math.cos(angle + Math.PI/2)*distance;
-        velX += dX/ //a timestep;
-        velY += dY/ //a timestep;
-    }
-    public void rightThrustAction()
-    {
-        double a = //value of the engine
-        double vel=a* //a timestep;
-        double distance = vel*// a timestep;
-        double dX = Math.sin((angle + (Math.PI/2)))*distance;
-        double dY = Math.cos(angle + Math.PI/2)*distance;
-        velX += dX/ //a timestep;
-        velY += dY/ //a timestep;
+        this.thrust=thrust;
     }
 
-    public void mainThrust()
+    public void useLeftThrusters (){
+        oldAngle=angle;
+    }
+    public void useRightThrusters (){
+        oldAngle=angle;
+    }
+    public double leftThrustAction()
     {
-        double a = //value of the engine
-        double vel=a* //a timestep;
-        double distance = vel* //a timestep;
-        double dX = Math.sin(-angle)*distance;
-        double dY = Math.cos(angle)*distance;
-        velX += dX/ //a timestep;
-        velY += dY/ //a timestep;
+        double a = object.getForce().getEuclideanLength()/object.getMassInKg();
+        double angle=Math.sqrt(a/radius);
+        return angle*(180/Math.PI);
+    }
+    public double rightThrustAction()
+    {
+        double a = object.getForce().getEuclideanLength()/object.getMassInKg();
+        double angle=Math.sqrt(a/radius);
+        return angle*(180/Math.PI);   
+    }
+    public double mainThrust()
+    {
+        double a = object.getForce().getEuclideanLength()/object.getMassInKg();
+        double angle=Math.sqrt(a/radius);
+        return angle*(180/Math.PI); 
     }
 }
