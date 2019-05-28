@@ -13,8 +13,15 @@ public class TestTorque extends Application{
 
     final int WIDTH=500;
     final int HEIGHT=500;
+    static double titanRadius = 2575*1000;
+    static double startingDistance = titanRadius+800*1000;
 
     public void start(Stage firstStage){
+        //Calculations
+        //Test: Probe
+        SimulationBody internalProbe = new SimulationBody(new Vector2D(startingDistance,0), new Vector2D(0, 1600), 5000, 1, new WindSpeed(1));
+        TorqueTry testTorque= new TorqueTry(internalProbe);
+
         Box lander= new Box(100,100,100);
         PhongMaterial boxColor= new PhongMaterial();
         boxColor.setDiffuseColor(Color.BLUE);

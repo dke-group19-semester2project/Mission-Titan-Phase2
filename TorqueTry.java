@@ -42,17 +42,17 @@ public class TorqueTry{
 
 
     //reference for the power of the thrusters
-    private float calculateTorque() {
+   /*private float calculateTorque() {
         var distToCOM = shape.localCOM.mul( -1.0);
         return distToCOM.x * thrustDir.y - radius * thrustDir.x;
-    }
+    }*/
     public void leftThrust()
     {
         oldAngle=angle;
         angle += Math.PI / 180;
 
         //rotation around the barycenter
-        spaceCraft.transform(new Affine(new Rotate(Spacecraft.leftThrust, x, y)));
+        object.transform(new Affine(new Rotate(object.leftThrust, x, y)));
 
     }
     public void useLeftThrusters (){
@@ -89,7 +89,7 @@ public class TorqueTry{
 
     public void mainThrust()
     {
-        double a = object.getForce ().getEuclideanLength ()/object.getMassInKg ();
+        double a = object.getForce().getEuclideanLength()/object.getMassInKg();
         double vel=a;
         double radius = vel;
         double dX = Math.sin(-angle)*radius;
