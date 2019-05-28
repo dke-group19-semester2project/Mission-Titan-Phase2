@@ -41,11 +41,7 @@ public class TorqueTry{
     }*/
 
 
-    //reference for the power of the thrusters
-    private float calculateTorque() {
-        var distToCOM = shape.localCOM.mul( -1.0);
-        return distToCOM.x * thrustDir.y - radius * thrustDir.x;
-    }
+    //reference for the power of the thruster
     public void leftThrust()
     {
         oldAngle=angle;
