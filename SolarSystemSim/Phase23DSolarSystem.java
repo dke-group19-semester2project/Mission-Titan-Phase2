@@ -15,6 +15,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.layout.Background;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.Box;
+import javafx.scene.shape.Sphere;
+import javafx.scene.shape.Circle;
+import javafx.scene.paint.Paint;
+import javafx.scene.PointLight;
+
 
 //Scaled to 10E3
 
@@ -23,37 +29,47 @@ public class Phase23DSolarSystem extends Application {
     private static final int WIDTH=1400;
     private static final int HEIGHT=800;
     private int index1=0;
+    private int rotation=0;
+    private int rotation2=0;
+    private int rotation3=0;
     private double scalingFactorOrbit=10E+6;
     private double gravitationalConstant = 6.67408E-11; //m^3/kg*s^2
+    private Point3D cameraAxis= new Point3D(1,0,0);
+    public int counter=0;
 
 
     public void start(Stage primaryStage) {
 
         //Camera
-       Camera camera= new PerspectiveCamera();
-        camera.translateXProperty().set(-WIDTH/2);
+        Camera camera= new PerspectiveCamera();
+        //BirdsEye View
+        /*camera.translateXProperty().set(-WIDTH/2);
         camera.translateYProperty().set(50000);
         camera.translateZProperty().set(-250000);
-        camera.setFarClip(500000000);
-        //Test ScaleX
-        //Must scale Earth and Moon to 63 and 17 to see the change
-        /*camera.translateXProperty().set(-3000);
-        camera.translateYProperty().set(15000);
-        camera.translateZProperty().set(-3000);
         camera.setFarClip(500000000);*/
+
+        //Probe View
+        camera.translateXProperty().set(0);
+        camera.translateYProperty().set(1800);
+        camera.translateZProperty().set(-3000);
+        camera.setRotationAxis(cameraAxis);
+        camera.setRotate(84);
 
         //Solar System
         BorderPane root= new BorderPane();
         //Sun
-        Star sun = new Star(0D,0D,0D,0D,0D,0D, 1.989E30,695);
+        Star sun = new Star(0D,0D,0D,0D,0D,0D, 1.989E30,6955);
         Image suny= new Image("2k_sun.jpg");
+        Point3D sunAxis= new Point3D(1,0,0);
+        sun.setRotationAxis(sunAxis);
+        sun.setRotate(85);
 
         //Source: https://www.solarsystemscope.com/textures/
         PhongMaterial sunSkin= new PhongMaterial();
         sunSkin.setDiffuseMap(suny);
         sun.setMaterial(sunSkin);
         //Mercury. Add some sort of marker! It's too small.
-        Planet mercury = new Planet(-2.105262111032039E+10, -6.640663808353403E+10, -3.492446023382954E+09,  3.665298706393840E+04, -1.228983810111077E+04, -4.368172898981951E+03, 3.301E+23,700);
+        Planet mercury = new Planet(-2.105262111032039E+10, -6.640663808353403E+10, -3.492446023382954E+09,  3.665298706393840E+04, -1.228983810111077E+04, -4.368172898981951E+03, 3.301E+23,24);
         mercury.setTranslateX(-2.105262111032039E+3);
         mercury.setTranslateY(-6.640663808353403E+3);
         mercury.setTranslateZ(-3.492446023382954E+2);
@@ -63,9 +79,13 @@ public class Phase23DSolarSystem extends Application {
         PhongMaterial mercurySkin= new PhongMaterial();
         mercurySkin.setDiffuseMap(mercuryy);
         mercury.setMaterial(mercurySkin);
+        Point3D mercuryAxis= new Point3D(1,0,0);
+        mercury.setRotationAxis(mercuryAxis);
+        mercury.setRotate(85);
+       
 
         //Venus
-        Planet venus = new Planet(-1.075055502695123E+11, -3.366520720591562E+09,  6.159219802771119E+09,  8.891598046362434E+02, -3.515920774124290E+04, -5.318594054684045E+02, 4.867E+24,700);
+        Planet venus = new Planet(-1.075055502695123E+11, -3.366520720591562E+09,  6.159219802771119E+09,  8.891598046362434E+02, -3.515920774124290E+04, -5.318594054684045E+02, 4.867E+24,61);
         venus.setTranslateX(-1.075055502695123E+4);
         venus.setTranslateY(-3.366520720591562E+2);
         venus.setTranslateZ(6.159219802771119E+2);
@@ -75,6 +95,9 @@ public class Phase23DSolarSystem extends Application {
         PhongMaterial venusSkin= new PhongMaterial();
         venusSkin.setDiffuseMap(venusy);
         venus.setMaterial(venusSkin);
+        Point3D venusAxis= new Point3D(1,0,0);
+        venus.setRotationAxis(venusAxis);
+        venus.setRotate(85);
 
         //Earth
         Planet earth = new Planet(-2.521092863852298E+10,  1.449279195712076E+11, -6.164888475164771E+05, -2.983983333368269E+04, -5.207633918704476E+03,  6.169062303484907E-02, 5.972E+24, 64);
@@ -82,9 +105,9 @@ public class Phase23DSolarSystem extends Application {
         earth.setTranslateY(1.449279195712076E+4);
         earth.setTranslateZ(-6.164888475164771E-02);
 
-        Point3D earthAxis= new Point3D(1,0,1);
+        Point3D earthAxis= new Point3D(1,0,0);
         earth.setRotationAxis(earthAxis);
-        earth.setRotate(103);
+        earth.setRotate(85);
 
         Image earthy= new Image("world.topo.200412.3x5400x2700.jpg");
         //Source: https://visibleearth.nasa.gov/view.php?id=73909
@@ -105,17 +128,21 @@ public class Phase23DSolarSystem extends Application {
         moon.setMaterial(moonSkin);
 
         //Probe:PLACEHOLDER
-        Planet probe= new Planet(-2.521092863852298E+10,  1.449279195712076E+11, -6.164888475164771E+05,100000,100000,100000,20000,600);
-        earth.setTranslateX(-2.521092863852298E+3);
-        earth.setTranslateY(1.449279195712076E+4);
-        earth.setTranslateZ(-6.164888475164771E-02);
+        Planet probe = new Planet(-2.521092863852298E+10,  1.449279195712076E+11, -6.164888475164771E+07,  2.0747878783946157E5, 1.9179849992707407E5,  -1.6014482977865146E4, 5000, 6);
+        //Sphere probe = new Sphere(600);
+        probe.setTranslateX(-2.521092863852298E+3);
+        probe.setTranslateY(1.449279195712076E+4);
+        probe.setTranslateZ(-6.164888475164771);
 
         //Mars
-        Planet mars = new Planet(2.079950549908331E+11, -3.143009561106971E+09, -5.178781160069674E+09,  1.295003532851602E+03,  2.629442067068712E+04,  5.190097267545717E+02, 6.417E+23,700);
+        Planet mars = new Planet(2.079950549908331E+11, -3.143009561106971E+09, -5.178781160069674E+09,  1.295003532851602E+03,  2.629442067068712E+04,  5.190097267545717E+02, 6.417E+23,34);
         mars.setTranslateX(2.079950549908331E+4);
         mars.setTranslateY(-3.143009561106971E+2);
         mars.setTranslateZ(-5.178781160069674E+2);
 
+        Point3D marsAxis= new Point3D(1,0,0);
+        mars.setRotationAxis(marsAxis);
+        mars.setRotate(85);
         //Source: https://www.solarsystemscope.com/textures/
         Image marsy= new Image("2k_mars.jpg");
         PhongMaterial marsSkin= new PhongMaterial();
@@ -123,7 +150,7 @@ public class Phase23DSolarSystem extends Application {
         mars.setMaterial(marsSkin);
 
         //Mars Moon: Phobos
-        Planet phobos= new Planet(2.080001728304922E+11,-3.135629529907857E+09,-5.180946414782474E+09,-2.461795389080246E+02,2.758970765510455E+04,1.326588322007167E+03,1.06E+16,350);
+        Planet phobos= new Planet(2.080001728304922E+11,-3.135629529907857E+09,-5.180946414782474E+09,-2.461795389080246E+02,2.758970765510455E+04,1.326588322007167E+03,1.06E+16,1);
         phobos.setTranslateX(2.080001728304922E+04);
         phobos.setTranslateY(-3.135629529907857E+02);
         phobos.setTranslateZ(-5.180946414782474E+02);
@@ -135,7 +162,7 @@ public class Phase23DSolarSystem extends Application {
         phobos.setMaterial(phobosSkin);
 
         //Mars Moon: Demios
-        Planet demios= new Planet( 2.079758459552988E+11,-3.134519020859756E+09 ,-5.168323663883276E+09, 8.310732201509531E+02,2.503674676157639E+04,  6.872885887768234E+02,2.4E+15,350);
+        Planet demios= new Planet( 2.079758459552988E+11,-3.134519020859756E+09 ,-5.168323663883276E+09, 8.310732201509531E+02,2.503674676157639E+04,  6.872885887768234E+02,2.4E+15,1);
         demios.setTranslateX(2.079758459552988E+04);
         demios.setTranslateY(-3.134519020859756E+02);
         demios.setTranslateZ(-5.168323663883276E+02);
@@ -147,7 +174,7 @@ public class Phase23DSolarSystem extends Application {
         demios.setMaterial(demiosSkin);
 
         //Jupiter
-        Planet jupiter = new Planet(5.989091595026654E+11,  4.391225931434094E+11, -1.523254615467653E+10, -7.901937631606453E+03,  1.116317697592017E+04,  1.306729060953327E+02, 1.899E+27,700);
+        Planet jupiter = new Planet(5.989091595026654E+11,  4.391225931434094E+11, -1.523254615467653E+10, -7.901937631606453E+03,  1.116317697592017E+04,  1.306729060953327E+02, 1.899E+27,699);
         jupiter.setTranslateX(5.989091595026654E+4);
         jupiter.setTranslateY(4.391225931434094E+4);
         jupiter.setTranslateZ(-1.523254615467653E+03);
@@ -158,8 +185,12 @@ public class Phase23DSolarSystem extends Application {
         jupiterSkin.setDiffuseMap(jupitery);
         jupiter.setMaterial(jupiterSkin);
 
+        Point3D jupiterAxis= new Point3D(1,0,0);
+        jupiter.setRotationAxis(jupiterAxis);
+        jupiter.setRotate(85);
+
         //Jupiter Moon: Io
-        Planet io= new Planet(5.989539518409647E+11,4.387023144998344E+11,-1.524679648427427E+10, 9.283361803632189E+03,1.303819812527103E+04,4.583205514926929E+02,8.932E+22,350);
+        Planet io= new Planet(5.989539518409647E+11,4.387023144998344E+11,-1.524679648427427E+10, 9.283361803632189E+03,1.303819812527103E+04,4.583205514926929E+02,8.932E+22,18);
         io.setTranslateX(5.989539518409647E+04);
         io.setTranslateY(4.387023144998344E+04);
         io.setTranslateZ(-1.524679648427427E+03);
@@ -171,7 +202,7 @@ public class Phase23DSolarSystem extends Application {
         io.setMaterial(ioSkin);
 
         //Jupiter Moon: Europa
-        Planet europa= new Planet(5.982770778300034E+11,4.393402643657560E+11,-1.523558910378432E+10,-1.227402322885824E+04,-1.912604058757177E+03,-2.952416114807850E+02,4.8E+22,350);
+        Planet europa= new Planet(5.982770778300034E+11,4.393402643657560E+11,-1.523558910378432E+10,-1.227402322885824E+04,-1.912604058757177E+03,-2.952416114807850E+02,4.8E+22,16);
         europa.setTranslateX(5.982770778300034E+04);
         europa.setTranslateY(4.393402643657560E+04);
         europa.setTranslateZ(-1.523558910378432E+03);
@@ -183,7 +214,7 @@ public class Phase23DSolarSystem extends Application {
         europa.setMaterial(europaSkin);
 
         //Jupiter Moon: Ganymede
-        Planet ganymede=new Planet(5.978734287587731E+11,4.388509469893177E+11,-1.525419290729403E+10,-5.123069954141830E+03,6.549868238873174E+02,-2.270989208416142E+02,1.4819E+23,350);
+        Planet ganymede=new Planet(5.978734287587731E+11,4.388509469893177E+11,-1.525419290729403E+10,-5.123069954141830E+03,6.549868238873174E+02,-2.270989208416142E+02,1.4819E+23,26);
         ganymede.setTranslateX(5.978734287587731E+04);
         ganymede.setTranslateY(4.388509469893177E+04);
         ganymede.setTranslateZ(-1.525419290729403E+03);
@@ -195,7 +226,7 @@ public class Phase23DSolarSystem extends Application {
         ganymede.setMaterial(ganymedeSkin);
 
         //Jupiter Moon: Callisto
-        Planet callisto= new Planet(5.995751543436089E+11,4.408784590989536E+11,-1.516642941711968E+10,-1.556521929613705E+04,1.413266575371035E+04,1.262439229830568E+02,1.0759E+23,350);
+        Planet callisto= new Planet(5.995751543436089E+11,4.408784590989536E+11,-1.516642941711968E+10,-1.556521929613705E+04,1.413266575371035E+04,1.262439229830568E+02,1.0759E+23,24);
         callisto.setTranslateX(5.995751543436089E+04);
         callisto.setTranslateY(4.408784590989536E+04);
         callisto.setTranslateZ(-1.516642941711968E+03);
@@ -207,10 +238,14 @@ public class Phase23DSolarSystem extends Application {
         callisto.setMaterial(callistoSkin);
 
         //Saturn
-        Planet saturn = new Planet(9.587063371332250E+11,  9.825652108702583E+11, -5.522065686935234E+10, -7.428885681642827E+03,  6.738814233429374E+03,  1.776643556375199E+02, 5.685E+26,700);
+        Planet saturn = new Planet(9.587063371332250E+11,  9.825652108702583E+11, -5.522065686935234E+10, -7.428885681642827E+03,  6.738814233429374E+03,  1.776643556375199E+02, 5.685E+26,582);
         saturn.setTranslateX(9.587063371332250E+4);
         saturn.setTranslateY(9.825652108702583E+4);
         saturn.setTranslateZ(-5.522065686935234E+3);
+
+        Point3D saturnAxis= new Point3D(1,0,0);
+        saturn.setRotationAxis(saturnAxis);
+        saturn.setRotate(85);
 
         //Source: https://www.solarsystemscope.com/textures/
         Image saturny= new Image("2k_saturn.jpg");
@@ -219,7 +254,7 @@ public class Phase23DSolarSystem extends Application {
         saturn.setMaterial(saturnSkin);
 
         //Saturn Moon:Titan
-        Planet titan = new Planet( 9.579293831681823E+11,  9.834677749678675E+11, -5.561032276665545E+10, -1.170810292990584E+04,  3.955109586303735E+03,  2.034356139087789E+03, 13455.3E+19,350);
+        Planet titan = new Planet( 9.579293831681823E+11,  9.834677749678675E+11, -5.561032276665545E+10, -1.170810292990584E+04,  3.955109586303735E+03,  2.034356139087789E+03, 13455.3E+19,25);
         titan.setTranslateX(9.579293831681823E+4);
         titan.setTranslateY(9.834677749678675E+4);
         titan.setTranslateZ(-5.561032276665545E+3);
@@ -231,7 +266,7 @@ public class Phase23DSolarSystem extends Application {
         titan.setMaterial(titanSkin);
 
         //Saturn Moon: Mimas
-        Planet mimas= new Planet(9.585933797467707E+11,9.827031937056004E+11,-5.528229528100616E+10,-1.858271656433577E+04,-5.864309674953683E+02,4.659784882381858E+03,3.73E+19,350);
+        Planet mimas= new Planet(9.585933797467707E+11,9.827031937056004E+11,-5.528229528100616E+10,-1.858271656433577E+04,-5.864309674953683E+02,4.659784882381858E+03,3.73E+19,1);
         mimas.setTranslateX(9.585933797467707E+04);
         mimas.setTranslateY(9.827031937056004E+04);
         mimas.setTranslateZ(-5.528229528100616E+03);
@@ -243,7 +278,7 @@ public class Phase23DSolarSystem extends Application {
         mimas.setMaterial(mimasSkin);
         
         //Saturn Moon: Enceladus
-        Planet enceladus= new Planet(9.584686368989240E+11,9.825698015650455E+11,-5.519999340655005E+10,-7.087891656970907E+03,-4.432543978580975E+03,5.997973410718807E+03,1.076E+20,350);
+        Planet enceladus= new Planet(9.584686368989240E+11,9.825698015650455E+11,-5.519999340655005E+10,-7.087891656970907E+03,-4.432543978580975E+03,5.997973410718807E+03,1.076E+20,2);
         enceladus.setTranslateX(9.584686368989240E+04);
         enceladus.setTranslateY(9.825698015650455E+04);
         enceladus.setTranslateZ(-5.519999340655005E+03);
@@ -255,7 +290,7 @@ public class Phase23DSolarSystem extends Application {
         enceladus.setMaterial(enceladusSkin);
 
         //Saturn Moon: Tethys
-        Planet tethys= new Planet(9.584896767756197E+11,9.823969914493581E+11,-5.511282890265793E+10,1.884353823857955E+02,-1.075740574740226E+03,3.294335699239238E+03,6.130E+20,350);
+        Planet tethys= new Planet(9.584896767756197E+11,9.823969914493581E+11,-5.511282890265793E+10,1.884353823857955E+02,-1.075740574740226E+03,3.294335699239238E+03,6.130E+20,5);
         tethys.setTranslateX(9.584896767756197E+04);
         tethys.setTranslateY(9.823969914493581E+04);
         tethys.setTranslateZ(-5.511282890265793E+03);
@@ -267,7 +302,7 @@ public class Phase23DSolarSystem extends Application {
         tethys.setMaterial(tethysSkin);
 
         //Saturn Moon: Dione
-        Planet dione= new Planet(9.585276353579862E+11, 9.822780179748093E+11,-5.505286854253536E+10,1.370108959468099E+03,2.186732770372938E+03,1.704947776738479E+03,1.097E+21,350);
+        Planet dione= new Planet(9.585276353579862E+11, 9.822780179748093E+11,-5.505286854253536E+10,1.370108959468099E+03,2.186732770372938E+03,1.704947776738479E+03,1.097E+21,6);
         dione.setTranslateX(9.585276353579862E+04);
         dione.setTranslateY(9.822780179748093E+04);
         dione.setTranslateZ(-5.505286854253536E+03);
@@ -280,7 +315,7 @@ public class Phase23DSolarSystem extends Application {
 
 
         //Saturn Moon: Rhea
-        Planet rhea= new Planet(9.582858745650558E+11,9.828629109039947E+11,-5.533445794600141E+10,-1.249378043406604E+04,9.548491287020374E+02,3.746988655327530E+03,2.29E+21,350);
+        Planet rhea= new Planet(9.582858745650558E+11,9.828629109039947E+11,-5.533445794600141E+10,-1.249378043406604E+04,9.548491287020374E+02,3.746988655327530E+03,2.29E+21,8);
         rhea.setTranslateX(9.582858745650558E+04);
         rhea.setTranslateY(9.828629109039947E+04);
         rhea.setTranslateZ(-5.533445794600141E+03);
@@ -292,7 +327,7 @@ public class Phase23DSolarSystem extends Application {
         rhea.setMaterial(rheaSkin);
 
         //Saturn Moon: Phoebe
-        Planet phoebe= new Planet(9.470030184077681E+11,9.797584943042043E+11,-5.388629873572934E+10,-8.111087864852331E+03,8.429736036831875E+03,2.813327671729886E+02,8.3E+18,350);
+        Planet phoebe= new Planet(9.470030184077681E+11,9.797584943042043E+11,-5.388629873572934E+10,-8.111087864852331E+03,8.429736036831875E+03,2.813327671729886E+02,8.3E+18,1);
         phoebe.setTranslateX(9.470030184077681E+04);
         phoebe.setTranslateY(9.797584943042043E+04);
         phoebe.setTranslateZ(-5.388629873572934E+03);
@@ -303,10 +338,36 @@ public class Phase23DSolarSystem extends Application {
         phoebeSkin.setDiffuseMap(phoeby);
         phoebe.setMaterial(phoebeSkin);
 
-        //Add Probe
+ 
+        Color color= Color.TRANSPARENT;
+        Color path= Color.CORNFLOWERBLUE;
+        Circle mercuryPath=new Circle(0,0,Math.abs(mercury.getTranslateX()), color);
+        mercuryPath.setStroke(path);
+        mercuryPath.setStrokeWidth(100);
+
+        Circle venusPath=new Circle(0,0,Math.abs(venus.getTranslateX()), color);
+        venusPath.setStroke(path);
+        venusPath.setStrokeWidth(100);
+
+        Circle earthPath=new Circle(0,0,Math.abs(earth.getTranslateX()), color);
+        earthPath.setStroke(path);
+        earthPath.setStrokeWidth(100);
+
+        Circle marsPath=new Circle(0,0,Math.abs(mars.getTranslateX()), color);
+        marsPath.setStroke(path);
+        marsPath.setStrokeWidth(100);
+
+        Circle jupiterPath=new Circle(0,0,Math.sqrt(Math.pow(jupiter.getTranslateX(),2)+Math.pow(jupiter.getTranslateY(),2)), color);
+        jupiterPath.setStroke(path);
+        jupiterPath.setStrokeWidth(100);
+
+        Circle saturnPath=new Circle(0,0,Math.abs(saturn.getTranslateX()), color);
+        saturnPath.setStroke(path);
+        saturnPath.setStrokeWidth(100);
 
 
-        //Adding Background Image
+    
+
         Group planets= new Group();
         planets.getChildren().add(sun);
         planets.getChildren().add(mercury);
@@ -330,10 +391,17 @@ public class Phase23DSolarSystem extends Application {
         planets.getChildren().add(rhea);
         planets.getChildren().add(phoebe);
         planets.getChildren().add(probe);
+        planets.getChildren().add(mercuryPath);
+        planets.getChildren().add(venusPath);
+        planets.getChildren().add(earthPath);
+        planets.getChildren().add(marsPath);
+        planets.getChildren().add(jupiterPath);
+        planets.getChildren().add(saturnPath);
         SubScene solarSystem=new SubScene(planets,WIDTH,HEIGHT);
         solarSystem.setCamera(camera);
         solarSystem.setFill(Color.BLACK);
         root.setCenter(solarSystem);
+
 
         //Creating a list of celestial bodies
         ArrayList<SpaceObject> listOfObjects = new ArrayList<SpaceObject>();
@@ -358,6 +426,7 @@ public class Phase23DSolarSystem extends Application {
         listOfObjects.add(dione);
         listOfObjects.add(rhea);
         listOfObjects.add(phoebe);
+        listOfObjects.add(probe);
 
 
         //Creating the scene
@@ -367,28 +436,50 @@ public class Phase23DSolarSystem extends Application {
         primaryStage.show();
 
         //Mathematical Model
-        final double YEAR_TO_SECONDS = 90*86400;
+        final double YEAR_TO_SECONDS = 55*86400;
         final double TIME_STEP=1;
         List<Vector> mercuryPos= new ArrayList<Vector>();
+        mercuryPos.add(mercury.getPosition());
         List<Vector> venusPos=  new ArrayList<Vector>();
+        venusPos.add(venus.getPosition());
         List<Vector> earthPos=  new ArrayList<Vector>();
+        earthPos.add(earth.getPosition());
         List<Vector> marsPos= new ArrayList<Vector>();
+        marsPos.add(mars.getPosition());
         List<Vector> jupiterPos= new ArrayList<Vector>();
+        jupiterPos.add(jupiter.getPosition());
         List<Vector> saturnPos= new ArrayList<Vector>();
+        saturnPos.add(saturn.getPosition());
         List<Vector> moonPos= new ArrayList<Vector>();
+        moonPos.add(moon.getPosition());
         List<Vector> titanPos= new ArrayList<Vector>();
+        titanPos.add(titan.getPosition());
         List<Vector> phobosPos= new ArrayList<Vector>();
+        phobosPos.add(mercury.getPosition());
         List<Vector> demiosPos= new ArrayList<Vector>();
+        demiosPos.add(demios.getPosition());
         List<Vector> ioPos= new ArrayList<Vector>();
+        ioPos.add(io.getPosition());
         List<Vector> europaPos= new ArrayList<Vector>();
+        europaPos.add(europa.getPosition());
         List<Vector> ganymedePos= new ArrayList<Vector>();
+        ganymedePos.add(ganymede.getPosition());
         List<Vector> callistoPos=new ArrayList<Vector>();
+        callistoPos.add(callisto.getPosition());
         List<Vector> mimasPos= new ArrayList<Vector>();
+        mimasPos.add(mimas.getPosition());
         List<Vector> enceladusPos= new ArrayList<Vector>();
+        enceladusPos.add(enceladus.getPosition());
         List<Vector> tethysPos= new ArrayList<Vector>();
+        tethysPos.add(tethys.getPosition());
         List<Vector> dionePos= new ArrayList<Vector>();
+        dionePos.add(dione.getPosition());
         List<Vector> rheaPos= new ArrayList<Vector>();
+        rheaPos.add(rhea.getPosition());
         List<Vector> phoebePos= new ArrayList<Vector>();
+        phoebePos.add(phoebe.getPosition());
+        List<Vector> probePos= new ArrayList<Vector>();
+        probePos.add(probe.getPosition());
 
         for (int i = 0; i<YEAR_TO_SECONDS; i++) {
             for (SpaceObject spaceObject : listOfObjects) {
@@ -419,8 +510,12 @@ public class Phase23DSolarSystem extends Application {
                 dionePos.add(listOfObjects.get(18).getPosition());
                 rheaPos.add(listOfObjects.get(19).getPosition());
                 phoebePos.add(listOfObjects.get(20).getPosition());
+                probePos.add(listOfObjects.get(21).getPosition());
             }
         }
+        probePos.get(probePos.size()-1).setX(titanPos.get(titanPos.size()-1).getX());
+        probePos.get(probePos.size()-1).setY(titanPos.get(titanPos.size()-1).getY());
+        probePos.get(probePos.size()-1).setZ(titanPos.get(titanPos.size()-1).getZ());
 
         //User Controls
         primaryStage.addEventHandler(KeyEvent.KEY_PRESSED,event2 ->{
@@ -487,7 +582,80 @@ public class Phase23DSolarSystem extends Application {
                         phoebe.translateXProperty().set(phoebePos.get(index1).getX()/(scalingFactorOrbit));
                         phoebe.translateYProperty().set(phoebePos.get(index1).getY()/(scalingFactorOrbit));
                         phoebe.translateZProperty().set(phoebePos.get(index1).getZ()/(scalingFactorOrbit));
+                        probe.translateXProperty().set(probePos.get(index1).getX()/(scalingFactorOrbit));
+                        probe.translateYProperty().set(probePos.get(index1).getY()/(scalingFactorOrbit));
+                        probe.translateZProperty().set(probePos.get(index1).getZ()/(scalingFactorOrbit));
+                        camera.translateXProperty().set(probe.getTranslateX()-500);
+                        camera.translateYProperty().set(probe.getTranslateY()+100);
+                        camera.translateZProperty().set(probe.getTranslateZ()-400);
                         index1++;
+                    }else if(index1==mercuryPos.size()-1){
+                        mercury.translateXProperty().set(mercuryPos.get(index1).getX()/(scalingFactorOrbit));
+                        mercury.translateYProperty().set(mercuryPos.get(index1).getY()/(scalingFactorOrbit));
+                        mercury.translateZProperty().set(mercuryPos.get(index1).getZ()/(scalingFactorOrbit));
+                        venus.translateXProperty().set(venusPos.get(index1).getX()/(scalingFactorOrbit));
+                        venus.translateYProperty().set(venusPos.get(index1).getY()/(scalingFactorOrbit));
+                        venus.translateZProperty().set(venusPos.get(index1).getZ()/(scalingFactorOrbit));
+                        earth.translateXProperty().set(earthPos.get(index1).getX()/(scalingFactorOrbit));
+                        earth.translateYProperty().set(earthPos.get(index1).getY()/(scalingFactorOrbit));
+                        earth.translateZProperty().set(earthPos.get(index1).getZ()/(scalingFactorOrbit));
+                        mars.translateXProperty().set(marsPos.get(index1).getX()/(scalingFactorOrbit));
+                        mars.translateYProperty().set(marsPos.get(index1).getY()/(scalingFactorOrbit));
+                        mars.translateZProperty().set(marsPos.get(index1).getZ()/(scalingFactorOrbit));
+                        jupiter.translateXProperty().set(jupiterPos.get(index1).getX()/(scalingFactorOrbit));
+                        jupiter.translateYProperty().set(jupiterPos.get(index1).getY()/(scalingFactorOrbit));
+                        jupiter.translateZProperty().set(jupiterPos.get(index1).getZ()/(scalingFactorOrbit));
+                        saturn.translateXProperty().set(saturnPos.get(index1).getX()/(scalingFactorOrbit));
+                        saturn.translateYProperty().set(saturnPos.get(index1).getY()/(scalingFactorOrbit));
+                        saturn.translateZProperty().set(saturnPos.get(index1).getZ()/(scalingFactorOrbit));
+                        moon.translateXProperty().set(moonPos.get(index1).getX()/(scalingFactorOrbit));
+                        moon.translateYProperty().set(moonPos.get(index1).getY()/(scalingFactorOrbit));
+                        moon.translateZProperty().set(moonPos.get(index1).getZ()/(scalingFactorOrbit));
+                        titan.translateXProperty().set(titanPos.get(index1).getX()/(scalingFactorOrbit));
+                        titan.translateYProperty().set(titanPos.get(index1).getY()/(scalingFactorOrbit));
+                        titan.translateZProperty().set(titanPos.get(index1).getZ()/(scalingFactorOrbit));
+                        phobos.translateXProperty().set(phobosPos.get(index1).getX()/(scalingFactorOrbit));
+                        phobos.translateYProperty().set(phobosPos.get(index1).getY()/(scalingFactorOrbit));
+                        phobos.translateZProperty().set(phobosPos.get(index1).getZ()/(scalingFactorOrbit));
+                        demios.translateXProperty().set(demiosPos.get(index1).getX()/(scalingFactorOrbit));
+                        demios.translateYProperty().set(demiosPos.get(index1).getY()/(scalingFactorOrbit));
+                        demios.translateZProperty().set(demiosPos.get(index1).getZ()/(scalingFactorOrbit));
+                        io.translateXProperty().set(ioPos.get(index1).getX()/(scalingFactorOrbit));
+                        io.translateYProperty().set(ioPos.get(index1).getY()/(scalingFactorOrbit));
+                        io.translateZProperty().set(ioPos.get(index1).getZ()/(scalingFactorOrbit));
+                        europa.translateXProperty().set(europaPos.get(index1).getX()/(scalingFactorOrbit));
+                        europa.translateYProperty().set(europaPos.get(index1).getY()/(scalingFactorOrbit));
+                        europa.translateZProperty().set(europaPos.get(index1).getZ()/(scalingFactorOrbit));
+                        ganymede.translateXProperty().set(ganymedePos.get(index1).getX()/(scalingFactorOrbit));
+                        ganymede.translateYProperty().set(ganymedePos.get(index1).getY()/(scalingFactorOrbit));
+                        ganymede.translateZProperty().set(ganymedePos.get(index1).getZ()/(scalingFactorOrbit));
+                        callisto.translateXProperty().set(callistoPos.get(index1).getX()/(scalingFactorOrbit));
+                        callisto.translateYProperty().set(callistoPos.get(index1).getY()/(scalingFactorOrbit));
+                        callisto.translateZProperty().set(callistoPos.get(index1).getZ()/(scalingFactorOrbit));
+                        mimas.translateXProperty().set(mimasPos.get(index1).getX()/(scalingFactorOrbit));
+                        mimas.translateYProperty().set(mimasPos.get(index1).getY()/(scalingFactorOrbit));
+                        mimas.translateZProperty().set(mimasPos.get(index1).getZ()/(scalingFactorOrbit));
+                        enceladus.translateXProperty().set(enceladusPos.get(index1).getX()/(scalingFactorOrbit));
+                        enceladus.translateYProperty().set(enceladusPos.get(index1).getY()/(scalingFactorOrbit));
+                        enceladus.translateZProperty().set(enceladusPos.get(index1).getZ()/(scalingFactorOrbit));
+                        tethys.translateXProperty().set(tethysPos.get(index1).getX()/(scalingFactorOrbit));
+                        tethys.translateYProperty().set(tethysPos.get(index1).getY()/(scalingFactorOrbit));
+                        tethys.translateZProperty().set(tethysPos.get(index1).getZ()/(scalingFactorOrbit));
+                        dione.translateXProperty().set(dionePos.get(index1).getX()/(scalingFactorOrbit));
+                        dione.translateYProperty().set(dionePos.get(index1).getY()/(scalingFactorOrbit));
+                        dione.translateZProperty().set(dionePos.get(index1).getZ()/(scalingFactorOrbit));
+                        rhea.translateXProperty().set(rheaPos.get(index1).getX()/(scalingFactorOrbit));
+                        rhea.translateYProperty().set(rheaPos.get(index1).getY()/(scalingFactorOrbit));
+                        rhea.translateZProperty().set(rheaPos.get(index1).getZ()/(scalingFactorOrbit));
+                        phoebe.translateXProperty().set(phoebePos.get(index1).getX()/(scalingFactorOrbit));
+                        phoebe.translateYProperty().set(phoebePos.get(index1).getY()/(scalingFactorOrbit));
+                        phoebe.translateZProperty().set(phoebePos.get(index1).getZ()/(scalingFactorOrbit));
+                        probe.translateXProperty().set(probePos.get(index1).getX()/(scalingFactorOrbit));
+                        probe.translateYProperty().set(probePos.get(index1).getY()/(scalingFactorOrbit));
+                        probe.translateZProperty().set(probePos.get(index1).getZ()/(scalingFactorOrbit));
+                        camera.translateXProperty().set(probe.getTranslateX()-500);
+                        camera.translateYProperty().set(probe.getTranslateY()+100);
+                        camera.translateZProperty().set(probe.getTranslateZ()-400);
                     }else if(index1==0){
                         mercury.translateXProperty().set(mercuryPos.get(index1).getX()/(scalingFactorOrbit));
                         mercury.translateYProperty().set(mercuryPos.get(index1).getY()/(scalingFactorOrbit));
@@ -549,6 +717,12 @@ public class Phase23DSolarSystem extends Application {
                         phoebe.translateXProperty().set(phoebePos.get(index1).getX()/(scalingFactorOrbit));
                         phoebe.translateYProperty().set(phoebePos.get(index1).getY()/(scalingFactorOrbit));
                         phoebe.translateZProperty().set(phoebePos.get(index1).getZ()/(scalingFactorOrbit));
+                        probe.translateXProperty().set(probePos.get(index1).getX()/(scalingFactorOrbit));
+                        probe.translateYProperty().set(probePos.get(index1).getY()/(scalingFactorOrbit));
+                        probe.translateZProperty().set(probePos.get(index1).getZ()/(scalingFactorOrbit));
+                        camera.translateXProperty().set(probe.getTranslateX()-500);
+                        camera.translateYProperty().set(probe.getTranslateY()+100);
+                        camera.translateZProperty().set(probe.getTranslateZ()-400);
                         index1++;
                     }else{}
                     break;
@@ -614,6 +788,12 @@ public class Phase23DSolarSystem extends Application {
                         phoebe.translateXProperty().set(phoebePos.get(index1).getX()/(scalingFactorOrbit));
                         phoebe.translateYProperty().set(phoebePos.get(index1).getY()/(scalingFactorOrbit));
                         phoebe.translateZProperty().set(phoebePos.get(index1).getZ()/(scalingFactorOrbit));
+                        probe.translateXProperty().set(probePos.get(index1).getX()/(scalingFactorOrbit));
+                        probe.translateYProperty().set(probePos.get(index1).getY()/(scalingFactorOrbit));
+                        probe.translateZProperty().set(probePos.get(index1).getZ()/(scalingFactorOrbit));
+                        camera.translateXProperty().set(probe.getTranslateX()-500);
+                        camera.translateYProperty().set(probe.getTranslateY()+100);
+                        camera.translateZProperty().set(probe.getTranslateZ()-400);
                         index1--;
                     }else if(index1==0){
                         mercury.translateXProperty().set(mercuryPos.get(index1).getX()/(scalingFactorOrbit));
@@ -676,7 +856,12 @@ public class Phase23DSolarSystem extends Application {
                         phoebe.translateXProperty().set(phoebePos.get(index1).getX()/(scalingFactorOrbit));
                         phoebe.translateYProperty().set(phoebePos.get(index1).getY()/(scalingFactorOrbit));
                         phoebe.translateZProperty().set(phoebePos.get(index1).getZ()/(scalingFactorOrbit));
-
+                        probe.translateXProperty().set(probePos.get(index1).getX()/(scalingFactorOrbit));
+                        probe.translateYProperty().set(probePos.get(index1).getY()/(scalingFactorOrbit));
+                        probe.translateZProperty().set(probePos.get(index1).getZ()/(scalingFactorOrbit));
+                        camera.translateXProperty().set(probe.getTranslateX()-500);
+                        camera.translateYProperty().set(probe.getTranslateY()+100);
+                        camera.translateZProperty().set(probe.getTranslateZ()-400);
                     }
                     break;
             }
