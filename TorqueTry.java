@@ -11,12 +11,15 @@ public class TorqueTry{
     private double angularVelocity;
     private double angularAcceleration;
     private double position;
-    private double angle;
-    private SimulationBody object;
+    private double angle=0;
+    private double oldAngle;
+    private TestBody object;
+    private double thrust;
+    static double titanRadius = 2575*1000;
     //distance are in meters
-    private final double radius =6;
+    private final double radius=6;
 
-    TorqueTry(SimulationBody object){
+    TorqueTry(TestBody object){
         this.object=object;
     }
     /*
@@ -46,55 +49,33 @@ public class TorqueTry{
         var distToCOM = shape.localCOM.mul( -1.0);
         return distToCOM.x * thrustDir.y - radius * thrustDir.x;
     }*/
-    public void leftThrust()
+    public void setThrust(double thrust)
     {
-        oldAngle=angle;
-        angle += Math.PI / 180;
-
-        //rotation around the barycenter
-        object.transform(new Affine(new Rotate(object.leftThrust, x, y)));
-
+        this.thrust=thrust;
     }
+
     public void useLeftThrusters (){
         oldAngle=angle;
-        angle += Math.PI / 180;
-        spaceCraft.transform(new Affine(new Rotate(object.leftThrust, x, y)));
     }
     public void useRightThrusters (){
         oldAngle=angle;
-        angle -= Math.PI / 180;
-        object.transform(new Affine(new Rotate(TorqueTry(object).rightThrust, x, y)));
     }
-    public void leftThrustAction()
-    {
-        double a = object.getForce ().getEuclideanLength ()/object.getMassInKg ();
-        double vel=a;
-        double radius = vel;
-        double dX = Math.sin(-(angle + (Math.PI/2)))*radius;
-        double dY = Math.cos(angle + Math.PI/2)*radius;
-        velX += dX;
-        velY += dY;
-        delaV=velX + velY;
-    }
-    public void rightThrustAction()
-    {
-        double a = object.getForce ().getEuclideanLength ()/object.getMassInKg ();
-        double vel=a;
-        double radius = vel;
-        double dX = Math.sin((angle + (Math.PI/2)))*radius;
-        double dY = Math.cos(angle + Math.PI/2)*radius;
-        velX += dX;
-        velY += dY;
-    }
-
-    public void mainThrust()
+    public double leftThrustAction()
     {
         double a = object.getForce().getEuclideanLength()/object.getMassInKg();
-        double vel=a;
-        double radius = vel;
-        double dX = Math.sin(-angle)*radius;
-        double dY = Math.cos(angle)*radius;
-        velX += dX;
-        velY += dY;
+        double angle=Math.sqrt(a/radius);
+        return angle*(180/Math.PI);
+    }
+    public double rightThrustAction()
+    {
+        double a = object.getForce().getEuclideanLength()/object.getMassInKg();
+        double angle=Math.sqrt(a/radius);
+        return angle*(180/Math.PI);   
+    }
+    public double mainThrust()
+    {
+        double a = object.getForce().getEuclideanLength()/object.getMassInKg();
+        double angle=Math.sqrt(a/radius);
+        return angle*(180/Math.PI); 
     }
 }

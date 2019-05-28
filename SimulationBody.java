@@ -105,6 +105,17 @@ public class SimulationBody{
         Vector2D difference = new Vector2D(newX, newY);
         return difference;
     }
+     public Vector2D getAccelerationValue (){
+        return acceleration;
+    }
+
+    public Vector2D getForce() {
+        return forceVector;
+    }
+
+    public double getMassInKg() {
+        return massInKg;
+    }
     public WindSpeedInterface getWindSpeed () {
         return windSpeed;
     }
