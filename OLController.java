@@ -4,6 +4,7 @@ public class OLController implements ControllerInterface {
     static double titanRadius = 2575*1000;
     static double startingDistance = titanRadius+800*1000;
     static double probeMass = 5000;
+    private double forceUsed = 0;
     private static ArrayList<SimulationBody> bodies = new ArrayList<SimulationBody>();
     SimulationBody titan = new SimulationBody(new Vector2D(0,0), new Vector2D(0,0), 1.3452E23, 2*titanRadius, new WindSpeed(1));
     SimulationBody internalProbe = new SimulationBody(new Vector2D(startingDistance,0), new Vector2D(0, 1600), 5000, 1, new WindSpeed(1));
@@ -36,6 +37,7 @@ public class OLController implements ControllerInterface {
         }
         internalProbe.changeVelocityWithMainThrusters(deltaV);
         internalProbe.updatePositionAndVelocity(1, titan);
+        forceUsed = convertDeltaVToForceMagnitude(deltaV);
         return deltaV;
     }
     private double computeCurrentSpeed () {
@@ -64,6 +66,9 @@ public class OLController implements ControllerInterface {
     }
     public SimulationBody getInternalProbe() {
         return internalProbe;
+    }
+    public double getForceUsed() {
+        return forceUsed;
     }
 
 }
