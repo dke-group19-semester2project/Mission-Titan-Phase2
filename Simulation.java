@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 public class Simulation {
+    
+    private double totalForce = 0;
 
     private static ArrayList<SimulationBody> bodies = new ArrayList<SimulationBody>();
     class Display extends JComponent {
@@ -127,6 +129,7 @@ public class Simulation {
 //            double deltaVMagnitude = Math.sqrt(deltaV.x*deltaV.x + deltaV.y+deltaV.y);
 //            System.out.println("Current deltaVMagnitude: \n" + deltaVMagnitude);
             realProbe.updatePositionAndVelocity(1, titan);
+            totalForce = totalForce + controller.getForceUsed();
             windVelocity = realProbe.getWindSpeed().getCurrentWindVelocity();
             //System.out.println("Current wind velocity: " + windVelocity.toString());
             if(i % 100 == 0) {
@@ -143,6 +146,7 @@ public class Simulation {
             if (newDistance<=titanRadius) {
                 hasLanded = true;
                 System.out.println("The realProbe has landed.");
+                System.out.println("Total force produced : " + totalForce);
                 System.out.println("Current distance: \n" + newDistance);
                 System.out.println("Current position: \n" + realProbe.getPosition().toString());
                 Vector2D currentVelocity = realProbe.getVelocity();
