@@ -6,7 +6,7 @@ public class FeedbackController implements ControllerInterface {
     private Vector2D OLProbeVelocity;
     private Vector2D WindForce = new Vector2D(0,0);
     private Vector2D deltaVFeedback;
-    private double forseUsed = 0;
+    private double forceUsed = 0;
     
     static double titanRadius = 2575*1000;
     static double startingDistance = titanRadius+800*1000;
@@ -65,10 +65,14 @@ public class FeedbackController implements ControllerInterface {
         return deltaVUpdated;
     }
     public Vector2D convertDeltaVToForce (Vector2D deltaV) {
-        return new Vector2D(0,0);
+        double xForce = deltaVFeedback.x*probeMass;
+        double yForce = deltaVFeedback.y*probeMass;
+        return new Vector2D(xForce, yForce);
     }
     public double convertDeltaVToForceMagnitude (Vector2D deltaV) {
-        return 0.0;
+        Vector2D force = convertDeltaVToForce(deltaV);
+        double forceMagnitude = Math.sqrt(force.x*force.x + force.y*force.y);
+        return forceMagnitude;
     }
     public double getForceUsed() {
         return forceUsed;
