@@ -41,7 +41,7 @@ public class WindSpeed implements WindSpeedInterface {
          }else if(height>128 && height<= 500){
           atmosphereDensity=0.01-2.684928317E-5*(height-128)-4.014582111E-14*Math.pow((height-128),3);
          }else{
-             atmosphereDensity=1E-5+1.577064182E-8*(height-500)-4.480273636E-11*Math.pow(height-128),2)+1.659360606E-14*Math.pow((height-500),3);
+             atmosphereDensity=1E-5+1.577064182E-8*(height-500)-4.480273636E-11*Math.pow((height-128),2)+1.659360606E-14*Math.pow((height-500),3);
          }
     }
 
