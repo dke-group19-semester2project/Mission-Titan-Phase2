@@ -56,10 +56,6 @@ public class Simulation {
                 g2.drawString(landedString, 800, 300);
             }
 
-            // TODO: Add a red X to the predicted landing location
-            // TODO: Add a label displaying the wind velocity as an arrow and as x & y coordinates
-            //Vector2D windVelocity = realProbe.getWindSpeed().getCurrentWindVelocity();
-            //JLabel windLabel = new JLabel(windVelocity.toString());
 
         }
     }
@@ -84,14 +80,7 @@ public class Simulation {
         // GUI
         JFrame frame = new JFrame();
         JPanel panel = new JPanel();
-//        GridLayout grid = new GridLayout(0,0);
-//        panel.setLayout(grid);
-//        panel.add(display);
         Vector2D windVelocity = realProbe.getWindSpeed().getCurrentWindVelocity();
-        // TODO: make an event listener that changes the wind velocity label
-//        double windSpeed = Math.sqrt(windVelocity.x*windVelocity.x + windVelocity.y*windVelocity.y);
-//        JLabel label = new JLabel("Current wind speed: \n" + windSpeed);
-//        panel.add(label);
 
 
         frame.add(display  );
@@ -99,26 +88,11 @@ public class Simulation {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
 
-        // TODO: Finish the for-loop below so that it does not mess with the deltaV calculations and is able to show a couple of rounds in orbit.
-//
-//        for (int i=0; i<60000; i++) {
-//            realProbe.updatePositionAndVelocity(1, titan);
-//            if(i % 100 == 0) {
-//                display.repaint();
-//                try {
-//                    TimeUnit.MILLISECONDS.sleep(20);
-//                } catch (Exception e) {
-//                    throw new RuntimeException(e);
-//                }
-//            }
-//        }
-
 
         //boolean hasLanded = false;
         int printCounter = 0;
         for (int i=0; i<60000; i++) {
             printCounter++;
-//            externalData.append(QUOTATION + "Current position:" + realProbe.getPosition().toString() + QUOTATION + COMMA_SEPARATOR + NEW_LINE);
             Vector2D deltaV = controller.updateAndGetDeltaV(this);
             realProbe.changeVelocityWithMainThrusters(deltaV);
             int currentForceMagnitude = (int) controller.convertDeltaVToForceMagnitude(deltaV);
