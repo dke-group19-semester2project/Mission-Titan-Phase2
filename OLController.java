@@ -40,6 +40,11 @@ public class OLController implements ControllerInterface {
         forceUsed = convertDeltaVToForceMagnitude(deltaV);
         return deltaV;
     }
+    public Vector2D updateWithHohmannTransfer () {
+        // TODO: Implement method so that it applies one big impulse in the beginning for transfer orbit, and suicide burn at the end
+        return deltaV;
+    }
+
     private double computeCurrentSpeed () {
         Vector2D currentVelocity = internalProbe.getVelocity();
         double speed = Math.sqrt(currentVelocity.x*currentVelocity.x + currentVelocity.y*currentVelocity.y);
@@ -47,7 +52,6 @@ public class OLController implements ControllerInterface {
     }
     public Vector2D updateAndGetDeltaV(Simulation realSim) { // Simulation realSim is not needed by the OL controller. However, the feedback one needs it.
         Vector2D deltaVupdated = update(1, realSim);
-        // Might be worth calling the method update here, so that when the external simulation calls updateAndGetDeltaV, the internal sim and deltaV will update.
         return deltaVupdated;
     }
     public Vector2D convertDeltaVToForce (Vector2D deltaV) {
