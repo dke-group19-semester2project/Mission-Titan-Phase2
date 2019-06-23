@@ -1,8 +1,8 @@
 import java.util.ArrayList;
 
 public class WindSpeedStochastic implements WindSpeedInterface {
-    private double massSaturn=5.68E26;//(Units: kg)
-    private double massTitan=1.342E23;// (Units: kg)
+    private final double MASS_SATURN=5.68E26;//(Units: kg)
+    private final  double MASS_TITAN=1.342E23;// (Units: kg)
     private double atmosphereDensity;//Atmospheric density of the planet on which you want to calculate the wind speed. (Units: kg/m^3)
     private double xResultingPressure;//x component of the atmospheric pressure(Units: Pa)
     private double yResultingPressure;//y component of the atmospheric pressure(Units: Pa)
@@ -41,13 +41,13 @@ public class WindSpeedStochastic implements WindSpeedInterface {
          }else if(height>128 && height<= 500){
           atmosphereDensity=0.01-2.684928317E-5*(height-128)-4.014582111E-14*Math.pow((height-128),3);
          }else{
-             atmosphereDensity=1E-5+1.577064182E-8*(height-500)-4.480273636E-11*Math.pow((height-128),2)+1.659360606E-14*Math.pow((height-500),3);
+             atmosphereDensity=(1E-5)+(1.577064182E-8)*(height-500)-(4.480273636E-11)*Math.pow((height-500),2)+(1.659360606E-14)*Math.pow((height-500),3);
          }
     }
 
     public void pressureGradientForce(double xPositionTargetBody, double yPositionTargetBody, double xVelocityTargetBody, double yVelocityTargetBody){
-        xPressureGradientForce=((massTitan *Math.pow(xVelocityTargetBody,2))/xPositionTargetBody)+(gravitationalConstant*massSaturn* massTitan)/(Math.pow(xPositionTargetBody,2));
-        yPressureGradientForce=((massTitan *Math.pow(yVelocityTargetBody,2))/yPositionTargetBody)+(gravitationalConstant*massSaturn* massTitan)/(Math.pow(yPositionTargetBody,2));
+        xPressureGradientForce=((MASS_TITAN *Math.pow(xVelocityTargetBody,2))/xPositionTargetBody)+(gravitationalConstant*MASS_SATURN* MASS_TITAN)/(Math.pow(xPositionTargetBody,2));
+        yPressureGradientForce=((MASS_TITAN *Math.pow(yVelocityTargetBody,2))/yPositionTargetBody)+(gravitationalConstant*MASS_SATURN* MASS_TITAN)/(Math.pow(yPositionTargetBody,2));
     }
 
     public void setAtmosphericMass(){
@@ -99,7 +99,7 @@ public class WindSpeedStochastic implements WindSpeedInterface {
     public Vector2D updateModelAndGetDrag(Vector2D positionOfCraft,Vector2D velocityOfCraft){
         //Cross-sectional area relates to the area of a circle. Units m^2
         double altitude=Math.sqrt(Math.pow(positionOfCraft.getX(),2)+Math.pow(positionOfCraft.getY(),2));
-        double height=(altitude-titanRadius)/10E3;
+        double height=(altitude-titanRadius)/1E3;
         if(height<=ATMOSPHERE_HEIGHT && height>=0){
             for (SpaceObject spaceObject : titanSystem) {
                 spaceObject.updateForce(titanSystem);
@@ -110,12 +110,12 @@ public class WindSpeedStochastic implements WindSpeedInterface {
             }
             setAtmosphericDensity(height);
             pressureGradientForce(titanSystem.get(1).getPosition().getX(), titanSystem.get(1).getPosition().getY(), titanSystem.get(1).getVelocity().getX(), titanSystem.get(1).getVelocity().getY());
-            windSpeed(xResultingPressure, yResultingPressure, 0);
+            windSpeed(xResultingPressure, yResultingPressure, 0); 
             double crossSectionalArea=Math.PI*Math.pow(6,2);
             double angleOfApproach=Math.atan2(positionOfCraft.getY(), positionOfCraft.getX());
             double dragCoefficient=0.2;//Titan's atmosphere has a reynold's number of 10^7. Cd of a sphere at 10^7 is 0.2.
             Vector2D force= new Vector2D((atmosphereDensity*Math.pow(xWindVelocityCF,2)*crossSectionalArea*Math.cos(angleOfApproach)*0.5*dragCoefficient),(atmosphereDensity*Math.pow(yWindVelocityCF,2)*crossSectionalArea*Math.sin(angleOfApproach)*0.5*dragCoefficient));
-        return force;
+            return force;
         }else{
             Vector2D force=new Vector2D(0,0);
             return force;
