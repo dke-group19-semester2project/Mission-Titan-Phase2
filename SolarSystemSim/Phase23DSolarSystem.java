@@ -31,7 +31,6 @@ public class Phase23DSolarSystem extends Application {
     private int index1=0;//Index of position array for the planets and probe. 
     private final double SCALING_FACTOR_ORBIT=10E+6;//Scales the calculation of orbital position for purpose of visualization.
     private final Point3D cameraAxis= new Point3D(1,0,0);
-    public int counter=0;
 
 
     public void start(Stage primaryStage) {
@@ -44,38 +43,40 @@ public class Phase23DSolarSystem extends Application {
         camera.translateZProperty().set(-250000);
         camera.setFarClip(500000000);*/
 
-        //Probe View
+        //Settings for the camera to view the probe
         camera.translateXProperty().set(0);
         camera.translateYProperty().set(1800);
         camera.translateZProperty().set(-3000);
         camera.setRotationAxis(cameraAxis);
         camera.setRotate(84);
 
-        //Solar System
         BorderPane root= new BorderPane();
+
+
         //Sun
+        //Mathematical Sun
         SpaceObject sun = new SpaceObject(0D,0D,0D,0D,0D,0D, 1.989E30);
+        //Graphical Sun
         Sphere sunGraphic= new Sphere(6955);
-        Image suny= new Image("2k_sun.jpg");
+        Image sunTex= new Image("2k_sun.jpg");  //Source: https://www.solarsystemscope.com/textures/
         Point3D sunAxis= new Point3D(1,0,0);
         sunGraphic.setRotationAxis(sunAxis);
         sunGraphic.setRotate(85);   
-        //Source: https://www.solarsystemscope.com/textures/
         PhongMaterial sunSkin= new PhongMaterial();
-        sunSkin.setDiffuseMap(suny);
+        sunSkin.setDiffuseMap(sunTex);
         sunGraphic.setMaterial(sunSkin);
 
-        
+        //Mercury
+        //Mathematical Mercury
         SpaceObject mercury = new SpaceObject(-2.105262111032039E+10, -6.640663808353403E+10, -3.492446023382954E+09,  3.665298706393840E+04, -1.228983810111077E+04, -4.368172898981951E+03, 3.301E+23);
+        //Graphical Mercury
         Sphere mercuryGraphic= new Sphere(24);
         mercuryGraphic.setTranslateX(-2.105262111032039E+3);
         mercuryGraphic.setTranslateY(-6.640663808353403E+3);
         mercuryGraphic.setTranslateZ(-3.492446023382954E+2);
-
-        //Source: https://www.solarsystemscope.com/textures/
-        Image mercuryy= new Image("2k_mercury.jpg");
+        Image mercuryTex= new Image("2k_mercury.jpg"); //Source: https://www.solarsystemscope.com/textures/
         PhongMaterial mercurySkin= new PhongMaterial();
-        mercurySkin.setDiffuseMap(mercuryy);
+        mercurySkin.setDiffuseMap(mercuryTex);
         mercuryGraphic.setMaterial(mercurySkin);
         Point3D mercuryAxis= new Point3D(1,0,0);
         mercuryGraphic.setRotationAxis(mercuryAxis);
@@ -83,280 +84,278 @@ public class Phase23DSolarSystem extends Application {
        
 
         //Venus
+        //Mathematical Venus
         SpaceObject venus = new SpaceObject(-1.075055502695123E+11, -3.366520720591562E+09,  6.159219802771119E+09,  8.891598046362434E+02, -3.515920774124290E+04, -5.318594054684045E+02, 4.867E+24);
+        //Graphical Venus
         Sphere venusGraphic = new Sphere(61);
         venusGraphic.setTranslateX(-1.075055502695123E+4);
         venusGraphic.setTranslateY(-3.366520720591562E+2);
         venusGraphic.setTranslateZ(6.159219802771119E+2);
-
-        //Source: https://www.solarsystemscope.com/textures/
-        Image venusy= new Image("2k_venus_surface.jpg");
+        Image venusTex= new Image("2k_venus_surface.jpg");//Source: https://www.solarsystemscope.com/textures/
         PhongMaterial venusSkin= new PhongMaterial();
-        venusSkin.setDiffuseMap(venusy);
+        venusSkin.setDiffuseMap(venusTex);
         venusGraphic.setMaterial(venusSkin);
         Point3D venusAxis= new Point3D(1,0,0);
         venusGraphic.setRotationAxis(venusAxis);
         venusGraphic.setRotate(85);
 
         //Earth
+        //Mathematical Earth
         SpaceObject earth = new SpaceObject(-2.521092863852298E+10,  1.449279195712076E+11, -6.164888475164771E+05, -2.983983333368269E+04, -5.207633918704476E+03,  6.169062303484907E-02, 5.972E+24);
+        //Graphical Earth
         Sphere earthGraphic = new Sphere(64);
         earthGraphic.setTranslateX(-2.521092863852298E+3);
         earthGraphic.setTranslateY(1.449279195712076E+4);
         earthGraphic.setTranslateZ(-6.164888475164771E-02);
-
         Point3D earthAxis= new Point3D(1,0,0);
         earthGraphic.setRotationAxis(earthAxis);
         earthGraphic.setRotate(85);
-
-        Image earthy= new Image("world.topo.200412.3x5400x2700.jpg");
-        //Source: https://visibleearth.nasa.gov/view.php?id=73909
+        Image earthTex= new Image("world.topo.200412.3x5400x2700.jpg"); //Source: https://visibleearth.nasa.gov/view.php?id=73909
         PhongMaterial earthSkin= new PhongMaterial();
-        earthSkin.setDiffuseMap(earthy);
+        earthSkin.setDiffuseMap(earthTex);
         earthGraphic.setMaterial(earthSkin);
 
         //Moon
+        //Mathematical Moon
         SpaceObject moon = new SpaceObject(-2.552857888050620E+10,  1.446860363961675E+11,  3.593933517466486E+07, -2.927904627038706E+04, -6.007566180814270E+03, -1.577640655646029E00, 7.349E+22);
+        //Graphical Moon
         Sphere moonGraphic= new Sphere(17);
         moonGraphic.setTranslateX(-2.552857888050620E+3);
         moonGraphic.setTranslateY(1.446860363961675E+4);
         moonGraphic.setTranslateZ(3.593933517466486);
-
-        Image moony= new Image("2k_moon.jpg");
-        //Source: https://www.solarsystemscope.com/textures/
+        Image moony= new Image("2k_moon.jpg");//Source: https://www.solarsystemscope.com/textures/
         PhongMaterial moonSkin= new PhongMaterial();
         moonSkin.setDiffuseMap(moony);
         moonGraphic.setMaterial(moonSkin);
 
-        //Probe:PLACEHOLDER
+        //Probe
+        //Mathematical Probe
         SpaceObject probe = new SpaceObject(-2.521092863852298E+10,  1.449279195712076E+11, -6.164888475164771E+07,  2.0747878783946157E5, 1.9179849992707407E5,  -1.6014482977865146E4, 5000);
+        //Graphical Probe
         Sphere probeGraphic = new Sphere(6);
-        //Sphere probe = new Sphere(600);
         probeGraphic.setTranslateX(-2.521092863852298E+3);
         probeGraphic.setTranslateY(1.449279195712076E+4);
         probeGraphic.setTranslateZ(-6.164888475164771);
 
         //Mars
+        //Mathematical Mars
         SpaceObject mars = new SpaceObject(2.079950549908331E+11, -3.143009561106971E+09, -5.178781160069674E+09,  1.295003532851602E+03,  2.629442067068712E+04,  5.190097267545717E+02, 6.417E+23);
+        //Graphical Mars
         Sphere marsGraphic= new Sphere(34);
         marsGraphic.setTranslateX(2.079950549908331E+4);
         marsGraphic.setTranslateY(-3.143009561106971E+2);
         marsGraphic.setTranslateZ(-5.178781160069674E+2);
-
         Point3D marsAxis= new Point3D(1,0,0);
         marsGraphic.setRotationAxis(marsAxis);
         marsGraphic.setRotate(85);
-        //Source: https://www.solarsystemscope.com/textures/
-        Image marsy= new Image("2k_mars.jpg");
+        Image marsTex= new Image("2k_mars.jpg");//Source: https://www.solarsystemscope.com/textures/
         PhongMaterial marsSkin= new PhongMaterial();
-        marsSkin.setDiffuseMap(marsy);
+        marsSkin.setDiffuseMap(marsTex);
         marsGraphic.setMaterial(marsSkin);
 
         //Mars Moon: Phobos
+        //Mathematical Phobos
         SpaceObject phobos= new SpaceObject(2.080001728304922E+11,-3.135629529907857E+09,-5.180946414782474E+09,-2.461795389080246E+02,2.758970765510455E+04,1.326588322007167E+03,1.06E+16);
+        //Graphical Phobos
         Sphere phobosGraphic= new Sphere(1);
         phobosGraphic.setTranslateX(2.080001728304922E+04);
         phobosGraphic.setTranslateY(-3.135629529907857E+02);
         phobosGraphic.setTranslateZ(-5.180946414782474E+02);
-
-        //Source: https://nasa3d.arc.nasa.gov/images
-        Image phobosy= new Image("mar1kuu2.jpg");
+        Image phobosTex= new Image("mar1kuu2.jpg");//Source: https://nasa3d.arc.nasa.gov/images
         PhongMaterial phobosSkin= new PhongMaterial();
-        phobosSkin.setDiffuseMap(phobosy);
+        phobosSkin.setDiffuseMap(phobosTex);
         phobosGraphic.setMaterial(phobosSkin);
 
         //Mars Moon: Demios
+        //Mathematical Demios
         SpaceObject demios= new SpaceObject( 2.079758459552988E+11,-3.134519020859756E+09 ,-5.168323663883276E+09, 8.310732201509531E+02,2.503674676157639E+04,  6.872885887768234E+02,2.4E+15);
+        //Graphical Demios
         Sphere demiosGraphic= new Sphere(1);
         demiosGraphic.setTranslateX(2.079758459552988E+04);
         demiosGraphic.setTranslateY(-3.134519020859756E+02);
         demiosGraphic.setTranslateZ(-5.168323663883276E+02);
-
-        //Source: https://www.solarsystemscope.com/textures/
-        Image demiosy= new Image("2k_ceres_fictional.jpg");
+        Image demiosTex= new Image("2k_ceres_fictional.jpg");//Source: https://www.solarsystemscope.com/textures/
         PhongMaterial demiosSkin= new PhongMaterial();
-        demiosSkin.setDiffuseMap(demiosy);
+        demiosSkin.setDiffuseMap(demiosTex);
         demiosGraphic.setMaterial(demiosSkin);
 
         //Jupiter
+        //Mathematical Jupiter
         SpaceObject jupiter = new SpaceObject(5.989091595026654E+11,  4.391225931434094E+11, -1.523254615467653E+10, -7.901937631606453E+03,  1.116317697592017E+04,  1.306729060953327E+02, 1.899E+27);
+        //Graphical Jupiter
         Sphere jupiterGraphic= new Sphere(699);
         jupiterGraphic.setTranslateX(5.989091595026654E+4);
         jupiterGraphic.setTranslateY(4.391225931434094E+4);
         jupiterGraphic.setTranslateZ(-1.523254615467653E+03);
-
-        //Source: https://www.solarsystemscope.com/textures/
-        Image jupitery= new Image("2k_jupiter.jpg");
+        Image jupiterTex= new Image("2k_jupiter.jpg");//Source: https://www.solarsystemscope.com/textures/
         PhongMaterial jupiterSkin= new PhongMaterial();
-        jupiterSkin.setDiffuseMap(jupitery);
+        jupiterSkin.setDiffuseMap(jupiterTex);
         jupiterGraphic.setMaterial(jupiterSkin);
-
         Point3D jupiterAxis= new Point3D(1,0,0);
         jupiterGraphic.setRotationAxis(jupiterAxis);
         jupiterGraphic.setRotate(85);
 
         //Jupiter Moon: Io
+        //Mathematical Io
         SpaceObject io= new SpaceObject(5.989539518409647E+11,4.387023144998344E+11,-1.524679648427427E+10, 9.283361803632189E+03,1.303819812527103E+04,4.583205514926929E+02,8.932E+22);
+        //Graphical Io
         Sphere ioGraphic= new Sphere(18);
         ioGraphic.setTranslateX(5.989539518409647E+04);
         ioGraphic.setTranslateY(4.387023144998344E+04);
         ioGraphic.setTranslateZ(-1.524679648427427E+03);
-
-        //Source: https://www.space.com/14977-jupiter-moon-io-global-map-photos.html
-        Image ioy= new Image("noyPQQbBJyozEwVpULzUvM-970-80.jpg");
+        Image ioTex= new Image("noyPQQbBJyozEwVpULzUvM-970-80.jpg"); //Source: https://www.space.com/14977-jupiter-moon-io-global-map-photos.html
         PhongMaterial ioSkin= new PhongMaterial();
-        ioSkin.setDiffuseMap(ioy);
+        ioSkin.setDiffuseMap(ioTex);
         ioGraphic.setMaterial(ioSkin);
 
         //Jupiter Moon: Europa
+        //Mathematical Europa
         SpaceObject europa= new SpaceObject(5.982770778300034E+11,4.393402643657560E+11,-1.523558910378432E+10,-1.227402322885824E+04,-1.912604058757177E+03,-2.952416114807850E+02,4.8E+22);
+        //Graphical Europa
         Sphere europaGraphic= new Sphere(16);
         europaGraphic.setTranslateX(5.982770778300034E+04);
         europaGraphic.setTranslateY(4.393402643657560E+04);
         europaGraphic.setTranslateZ(-1.523558910378432E+03);
-
-        //Source: http://www.planetary.org/blogs/guest-blogs/2013/0305-brown-sea-salt.html
-        Image europay = new Image("20130305_mikebrown01_europa_f537.jpg");
+        Image europaTex = new Image("20130305_mikebrown01_europa_f537.jpg");//Source: http://www.planetary.org/blogs/guest-blogs/2013/0305-brown-sea-salt.html
         PhongMaterial europaSkin= new PhongMaterial();
-        europaSkin.setDiffuseMap(europay);
+        europaSkin.setDiffuseMap(europaTex);
         europaGraphic.setMaterial(europaSkin);
 
         //Jupiter Moon: Ganymede
+        //Mathematical Ganymede
         SpaceObject ganymede=new SpaceObject(5.978734287587731E+11,4.388509469893177E+11,-1.525419290729403E+10,-5.123069954141830E+03,6.549868238873174E+02,-2.270989208416142E+02,1.4819E+23);
+        //Graphical Ganymede
         Sphere ganymedeGraphic= new Sphere(26);
         ganymedeGraphic.setTranslateX(5.978734287587731E+04);
         ganymedeGraphic.setTranslateY(4.388509469893177E+04);
         ganymedeGraphic.setTranslateZ(-1.525419290729403E+03);
-
-        //Source: https://commons.wikimedia.org/wiki/File:Map_of_Ganymede_by_Bj%C3%B6rn_J%C3%B3nsson.jpg
-        Image ganymedey= new Image("Map_of_Ganymede_by_Björn_Jónsson.jpg");
+        Image ganymedeTex= new Image("Map_of_Ganymede_by_Björn_Jónsson.jpg"); //Source: https://commons.wikimedia.org/wiki/File:Map_of_Ganymede_by_Bj%C3%B6rn_J%C3%B3nsson.jpg
         PhongMaterial ganymedeSkin= new PhongMaterial();
-        ganymedeSkin.setDiffuseMap(ganymedey);
+        ganymedeSkin.setDiffuseMap(ganymedeTex);
         ganymedeGraphic.setMaterial(ganymedeSkin);
 
         //Jupiter Moon: Callisto
+        //Mathematical Callisto
         SpaceObject callisto= new SpaceObject(5.995751543436089E+11,4.408784590989536E+11,-1.516642941711968E+10,-1.556521929613705E+04,1.413266575371035E+04,1.262439229830568E+02,1.0759E+23);
+        //Grapical Callisto
         Sphere callistoGraphic= new Sphere(24);
         callistoGraphic.setTranslateX(5.995751543436089E+04);
         callistoGraphic.setTranslateY(4.408784590989536E+04);
         callistoGraphic.setTranslateZ(-1.516642941711968E+03);
-
-        //Source: https://bjj.mmedia.is/data/callisto/index.html
-        Image callistoy= new Image("callisto.jpg");
+        Image callistoTex= new Image("callisto.jpg"); //Source: https://bjj.mmedia.is/data/callisto/index.html
         PhongMaterial callistoSkin= new PhongMaterial();
-        callistoSkin.setDiffuseMap(callistoy);
+        callistoSkin.setDiffuseMap(callistoTex);
         callistoGraphic.setMaterial(callistoSkin);
 
         //Saturn
+        //Mathematical Saturn
         SpaceObject saturn = new SpaceObject(9.587063371332250E+11,  9.825652108702583E+11, -5.522065686935234E+10, -7.428885681642827E+03,  6.738814233429374E+03,  1.776643556375199E+02, 5.685E+26);
+        //Graphical Saturn
         Sphere saturnGraphic = new Sphere(582);
         saturnGraphic.setTranslateX(9.587063371332250E+4);
         saturnGraphic.setTranslateY(9.825652108702583E+4);
         saturnGraphic.setTranslateZ(-5.522065686935234E+3);
-
         Point3D saturnAxis= new Point3D(1,0,0);
         saturnGraphic.setRotationAxis(saturnAxis);
         saturnGraphic.setRotate(85);
-
-        //Source: https://www.solarsystemscope.com/textures/
-        Image saturny= new Image("2k_saturn.jpg");
+        Image saturnTex= new Image("2k_saturn.jpg"); //Source: https://www.solarsystemscope.com/textures/
         PhongMaterial saturnSkin= new PhongMaterial();
-        saturnSkin.setDiffuseMap(saturny);
+        saturnSkin.setDiffuseMap(saturnTex);
         saturnGraphic.setMaterial(saturnSkin);
 
         //Saturn Moon:Titan
+        //Mathematical Titan
         SpaceObject titan = new SpaceObject( 9.579293831681823E+11,  9.834677749678675E+11, -5.561032276665545E+10, -1.170810292990584E+04,  3.955109586303735E+03,  2.034356139087789E+03, 13455.3E+19);
+        //Graphical Titan
         Sphere titanGraphic= new Sphere(25);
         titanGraphic.setTranslateX(9.579293831681823E+4);
         titanGraphic.setTranslateY(9.834677749678675E+4);
         titanGraphic.setTranslateZ(-5.561032276665545E+3);
-
-        //Source: https://nasa3d.arc.nasa.gov/images
-        Image titany= new Image("sat6fss1.jpg");
+        Image titanTex= new Image("sat6fss1.jpg"); //Source: https://nasa3d.arc.nasa.gov/images
         PhongMaterial titanSkin= new PhongMaterial();
-        titanSkin.setDiffuseMap(titany);
+        titanSkin.setDiffuseMap(titanTex);
         titanGraphic.setMaterial(titanSkin);
 
         //Saturn Moon: Mimas
+        //Mathematical Mimas
         SpaceObject mimas= new SpaceObject(9.585933797467707E+11,9.827031937056004E+11,-5.528229528100616E+10,-1.858271656433577E+04,-5.864309674953683E+02,4.659784882381858E+03,3.73E+19);
+        //Graphical Mimas
         Sphere mimasGraphic= new Sphere(1);
         mimasGraphic.setTranslateX(9.585933797467707E+04);
         mimasGraphic.setTranslateY(9.827031937056004E+04);
         mimasGraphic.setTranslateZ(-5.528229528100616E+03);
-
-        //Source: https://www.jpl.nasa.gov/spaceimages/details.php?id=PIA18437
-        Image mimasy= new Image("PIA18437_hires.jpg");
+        Image mimasTex= new Image("PIA18437_hires.jpg"); //Source: https://www.jpl.nasa.gov/spaceimages/details.php?id=PIA18437
         PhongMaterial mimasSkin= new PhongMaterial();
-        mimasSkin.setDiffuseMap(mimasy);
+        mimasSkin.setDiffuseMap(mimasTex);
         mimasGraphic.setMaterial(mimasSkin);
         
         //Saturn Moon: Enceladus
+        //Mathematical Enceladus
         SpaceObject enceladus= new SpaceObject(9.584686368989240E+11,9.825698015650455E+11,-5.519999340655005E+10,-7.087891656970907E+03,-4.432543978580975E+03,5.997973410718807E+03,1.076E+20);
+        //Graphical Enceladus
         Sphere enceladusGraphic= new Sphere(2);
         enceladusGraphic.setTranslateX(9.584686368989240E+04);
         enceladusGraphic.setTranslateY(9.825698015650455E+04);
         enceladusGraphic.setTranslateZ(-5.519999340655005E+03);
-
-        //Source: https://www.jpl.nasa.gov/spaceimages/details.php?id=PIA18435
-        Image enceladusy= new Image("PIA18435_hires.jpg");
+        Image enceladusTex= new Image("PIA18435_hires.jpg");//Source: https://www.jpl.nasa.gov/spaceimages/details.php?id=PIA18435
         PhongMaterial enceladusSkin= new PhongMaterial();
-        enceladusSkin.setDiffuseMap(enceladusy);
+        enceladusSkin.setDiffuseMap(enceladusTex);
         enceladusGraphic.setMaterial(enceladusSkin);
 
         //Saturn Moon: Tethys
+        //Mathematical Tethys
         SpaceObject tethys= new SpaceObject(9.584896767756197E+11,9.823969914493581E+11,-5.511282890265793E+10,1.884353823857955E+02,-1.075740574740226E+03,3.294335699239238E+03,6.130E+20);
+        //Graphical Tethys
         Sphere tethysGraphic= new Sphere(5);
         tethysGraphic.setTranslateX(9.584896767756197E+04);
         tethysGraphic.setTranslateY(9.823969914493581E+04);
         tethysGraphic.setTranslateZ(-5.511282890265793E+03);
-
-        //Source: https://www.jpl.nasa.gov/spaceimages/details.php?id=PIA18439
-        Image tethysy= new Image("PIA18439_hires.jpg");
+        Image tethysTex= new Image("PIA18439_hires.jpg");//Source: https://www.jpl.nasa.gov/spaceimages/details.php?id=PIA18439
         PhongMaterial tethysSkin= new PhongMaterial();
-        tethysSkin.setDiffuseMap(tethysy);
+        tethysSkin.setDiffuseMap(tethysTex);
         tethysGraphic.setMaterial(tethysSkin);
 
         //Saturn Moon: Dione
+        //Mathematical Dione
         SpaceObject dione= new SpaceObject(9.585276353579862E+11, 9.822780179748093E+11,-5.505286854253536E+10,1.370108959468099E+03,2.186732770372938E+03,1.704947776738479E+03,1.097E+21);
+        //Graphical Dione
         Sphere dioneGraphic= new Sphere(6);
         dioneGraphic.setTranslateX(9.585276353579862E+04);
         dioneGraphic.setTranslateY(9.822780179748093E+04);
         dioneGraphic.setTranslateZ(-5.505286854253536E+03);
-
-        //Source: https://www.jpl.nasa.gov/spaceimages/details.php?id=PIA18434
-        Image dioney= new Image("PIA18434_hires.jpg");
+        Image dioneTex= new Image("PIA18434_hires.jpg");//Source: https://www.jpl.nasa.gov/spaceimages/details.php?id=PIA18434
         PhongMaterial dioneSkin= new PhongMaterial();
-        dioneSkin.setDiffuseMap(dioney);
+        dioneSkin.setDiffuseMap(dioneTex);
         dioneGraphic.setMaterial(dioneSkin);
 
 
         //Saturn Moon: Rhea
+        //Mathematical Rhea
         SpaceObject rhea= new SpaceObject(9.582858745650558E+11,9.828629109039947E+11,-5.533445794600141E+10,-1.249378043406604E+04,9.548491287020374E+02,3.746988655327530E+03,2.29E+21);
+        //Graphical Rhea
         Sphere rheaGraphic= new Sphere(8);
         rheaGraphic.setTranslateX(9.582858745650558E+04);
         rheaGraphic.setTranslateY(9.828629109039947E+04);
         rheaGraphic.setTranslateZ(-5.533445794600141E+03);
-
-        //Source: https://www.jpl.nasa.gov/spaceimages/details.php?id=PIA18438
-        Image rheay= new Image("PIA18434_hires.jpg");
+        Image rheaTex= new Image("PIA18434_hires.jpg");//Source: https://www.jpl.nasa.gov/spaceimages/details.php?id=PIA18438
         PhongMaterial rheaSkin= new PhongMaterial();
-        rheaSkin.setDiffuseMap(rheay);
+        rheaSkin.setDiffuseMap(rheaTex);
         rheaGraphic.setMaterial(rheaSkin);
 
         //Saturn Moon: Phoebe
+        //Mathematical Phoebe
         SpaceObject phoebe= new SpaceObject(9.470030184077681E+11,9.797584943042043E+11,-5.388629873572934E+10,-8.111087864852331E+03,8.429736036831875E+03,2.813327671729886E+02,8.3E+18);
+        //Graphical Phoebe
         Sphere phoebeGraphic= new Sphere(1);
         phoebeGraphic.setTranslateX(9.470030184077681E+04);
         phoebeGraphic.setTranslateY(9.797584943042043E+04);
         phoebeGraphic.setTranslateZ(-5.388629873572934E+03);
-
-        //Source:https://www.solarsystemscope.com/textures/
-        Image phoeby= new Image("2k_makemake_fictional.jpg");
+        Image phoebeTex= new Image("2k_makemake_fictional.jpg"); //Source:https://www.solarsystemscope.com/textures/
         PhongMaterial phoebeSkin= new PhongMaterial();
-        phoebeSkin.setDiffuseMap(phoeby);
+        phoebeSkin.setDiffuseMap(phoebeTex);
         phoebeGraphic.setMaterial(phoebeSkin);
 
- 
+        //Graphical Representation of Orbital Paths
         Color color= Color.TRANSPARENT;
         Color path= Color.CORNFLOWERBLUE;
         Circle mercuryPath=new Circle(0,0,Math.abs(mercuryGraphic.getTranslateX()), color);
@@ -421,7 +420,7 @@ public class Phase23DSolarSystem extends Application {
         root.setCenter(solarSystem);
 
 
-        //Creating a list of celestial bodies
+        //Creating a list of celestial bodies (mathematical representation)
         ArrayList<SpaceObject> listOfObjects = new ArrayList<SpaceObject>();
         listOfObjects.add(sun);
         listOfObjects.add(mercury);
@@ -453,7 +452,7 @@ public class Phase23DSolarSystem extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        //Mathematical Model
+        //Mathematical Model: Input
         final double YEAR_TO_SECONDS = 55*86400;
         final double TIME_STEP=1;
         List<Vector3D> mercuryPos= new ArrayList<Vector3D>();
@@ -536,6 +535,7 @@ public class Phase23DSolarSystem extends Application {
         //User Controls
         primaryStage.addEventHandler(KeyEvent.KEY_PRESSED,event2 ->{
             switch(event2.getCode()){
+                //Moves the simulation forward in time
                 case A:
                     if(index1<mercuryPos.size()-1 && index1>0) {
                         mercuryGraphic.translateXProperty().set(mercuryPos.get(index1).getX()/(SCALING_FACTOR_ORBIT));
@@ -742,6 +742,7 @@ public class Phase23DSolarSystem extends Application {
                         index1++;
                     }else{}
                     break;
+                //Moves the simulation in reverse. 
                 case D:
                     if(index1>0){
                         mercuryGraphic.translateXProperty().set(mercuryPos.get(index1).getX()/(SCALING_FACTOR_ORBIT));
