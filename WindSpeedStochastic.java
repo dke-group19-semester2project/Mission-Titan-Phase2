@@ -67,7 +67,7 @@ public class WindSpeedStochastic implements WindSpeedInterface {
 
         xResultingPressure=(xPressureGradientForce/(4*Math.PI*Math.pow(titanRadius,2)))-xStartingPressure;
         double xPressureDifference=xStartingPressure-xResultingPressure;
-        xWindVelocityCF=atmosphereDensity*(xPressureDifference/(2*Math.PI* titanRadius))*timeStep;
+        xWindVelocityCF=(1/atmosphereDensity)*(xPressureDifference/(2*Math.PI* titanRadius))*timeStep;
         if(latitude!=0) {
             xWindVelocityCF=(xWindVelocityCF + Math.random()*randomness*xWindVelocityCF)/ (-2 * angularVelocity * Math.sin(latitude*Math.PI/180));
         }else{
@@ -76,7 +76,7 @@ public class WindSpeedStochastic implements WindSpeedInterface {
        
         yResultingPressure=(yPressureGradientForce/(4*Math.PI*Math.pow(titanRadius,2)))-yStartingPressure;
         double yPressureDifference=yStartingPressure-yResultingPressure;
-        yWindVelocityCF=atmosphereDensity*(yPressureDifference/(2*Math.PI* titanRadius))*timeStep;
+        yWindVelocityCF=(1/atmosphereDensity)*(yPressureDifference/(2*Math.PI* titanRadius))*timeStep;
         if(latitude!=0) {
             yWindVelocityCF=(yWindVelocityCF +Math.random()*randomness*yWindVelocityCF)/ (-2 * angularVelocity * Math.sin(latitude*Math.PI/180));
         }else{
@@ -93,7 +93,7 @@ public class WindSpeedStochastic implements WindSpeedInterface {
     public Vector2D updateModelAndGetDrag(Vector2D positionOfCraft,Vector2D velocityOfCraft){
         //Cross-sectional area relates to the area of a circle. Units m^2
         double altitude=Math.sqrt(Math.pow(positionOfCraft.getX(),2)+Math.pow(positionOfCraft.getY(),2));
-        double height=(altitude-titanRadius)/1E3;
+        double height=(altitude-titanRadius)/10E3;
         if(height<=ATMOSPHERE_HEIGHT && height>=0){
             for (SpaceObject spaceObject : titanSystem) {
                 spaceObject.updateForce(titanSystem);
