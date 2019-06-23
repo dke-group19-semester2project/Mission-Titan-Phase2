@@ -34,7 +34,7 @@ public class SimulationBody{
         return speed;
     }
     /*
-        The objective of method changeVelocityWithMainThrusters is to update velocity (without taking another time step).
+        The objective of method changeVelocityWithMainThrusters is to updateWithContinuousThrust velocity (without taking another time step).
         For now the spacecraft is presumed to be correctly oriented to either increase or reduce the speed.
      */
     public void changeVelocityWithMainThrusters(Vector2D deltaV) {
@@ -60,7 +60,7 @@ public class SimulationBody{
     public Vector2D getAcceleration (SimulationBody attractingBody) {
         // F=ma => a=F/m
         Vector2D gravitationalForce = getForceAsVector(attractingBody);
-        Vector2D drag = windSpeed.updateModelAndGetDrag(position,velocity);
+        Vector2D drag = windSpeed.updateModelAndGetDrag(position,velocity);//new Vector2D(0,0);//
         Vector2D netForce = sumOf(gravitationalForce, drag);
         Vector2D acceleration = netForce.dividedBy(this.massInKg); // Force is divided by the mass of the accelerating body
         return acceleration;
@@ -105,13 +105,13 @@ public class SimulationBody{
         Vector2D difference = new Vector2D(newX, newY);
         return difference;
     }
-     public Vector2D getAccelerationValue (){
-        return acceleration;
-    }
-
-    public Vector2D getForce() {
-        return forceVector;
-    }
+//     public Vector2D getAccelerationValue (){
+//        return acceleration;
+//    }
+//
+//    public Vector2D getForce() {
+//        return forceVector;
+//    }
 
     public double getMassInKg() {
         return massInKg;
