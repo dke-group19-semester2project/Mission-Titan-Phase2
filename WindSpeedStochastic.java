@@ -36,13 +36,7 @@ public class WindSpeedStochastic implements WindSpeedInterface {
     }
 
     public void setAtmosphericDensity(double height){
-        if(height>=0 && height<=128){
-            atmosphereDensity=0.01-0.037550272*(height-128)+(4.427171075E-5)*Math.pow((height-128),2)+1.152909134E-7*Math.pow((height-128),3);
-         }else if(height>128 && height<= 500){
-          atmosphereDensity=0.01-2.684928317E-5*(height-128)-4.014582111E-14*Math.pow((height-128),3);
-         }else{
-             atmosphereDensity=(1E-5)+(1.577064182E-8)*(height-500)-(4.480273636E-11)*Math.pow((height-500),2)+(1.659360606E-14)*Math.pow((height-500),3);
-         }
+        atmosphereDensity=0.01+(height-128)*(-0.0004347826+(height-105)*(0.000019486+(height-77)*(-0.0000017686+(height-61)*(0.000000041+(height-51)*(-5.0588235E-11+(height-43)*(2.9033613E-11+(height-37)*(-1.4199379E-11+(height-33)*(-9.3512492E-13+(height-17)*-2.7954473E-14))))))));
     }
 
     public void pressureGradientForce(double xPositionTargetBody, double yPositionTargetBody, double xVelocityTargetBody, double yVelocityTargetBody){
