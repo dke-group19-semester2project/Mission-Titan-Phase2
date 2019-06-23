@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 public class WindSpeed implements WindSpeedInterface {
-    private double massSaturn=5.68E26;//(Units: kg)
-    private double massTitan=1.342E23;// (Units: kg)
+    private final double MASS_SATURN=5.68E26;//(Units: kg)
+    private final  double MASS_TITAN=1.342E23;// (Units: kg)
     private double atmosphereDensity;//Atmospheric density of the planet on which you want to calculate the wind speed. (Units: kg/m^3)
     private double xResultingPressure;//x component of the atmospheric pressure(Units: Pa)
     private double yResultingPressure;//y component of the atmospheric pressure(Units: Pa)
@@ -9,8 +9,6 @@ public class WindSpeed implements WindSpeedInterface {
     private double latitude;//Latitude on the target body.(Units: Degrees)
     private double xPressureGradientForce; //x component of the Pressure Gradient Force (Units: N)
     private double yPressureGradientForce; //y component of the Pressure Gradient Force(Units: N)
-    private double previousXWindVelocityCF=0;
-    private double previousYWindVelocityCF=0;
     private double xWindVelocityCF;//x-Component of wind velocity above 800m (Units: m/s)
     private double yWindVelocityCF;//y-Component of wind velocity above 800m (Units: m/s)
     private double gravitationalConstant = 6.67408E-11; //m^3/kg*s^2
@@ -41,13 +39,13 @@ public class WindSpeed implements WindSpeedInterface {
          }else if(height>128 && height<= 500){
           atmosphereDensity=0.01-2.684928317E-5*(height-128)-4.014582111E-14*Math.pow((height-128),3);
          }else{
-             atmosphereDensity=1E-5+1.577064182E-8*(height-500)-4.480273636E-11*Math.pow((height-128),2)+1.659360606E-14*Math.pow((height-500),3);
+             atmosphereDensity=(1E-5)+(1.577064182E-8)*(height-500)-(4.480273636E-11)*Math.pow((height-500),2)+(1.659360606E-14)*Math.pow((height-500),3);
          }
     }
 
     public void pressureGradientForce(double xPositionTargetBody, double yPositionTargetBody, double xVelocityTargetBody, double yVelocityTargetBody){
-        xPressureGradientForce=((massTitan *Math.pow(xVelocityTargetBody,2))/xPositionTargetBody)+(gravitationalConstant*massSaturn* massTitan)/(Math.pow(xPositionTargetBody,2));
-        yPressureGradientForce=((massTitan *Math.pow(yVelocityTargetBody,2))/yPositionTargetBody)+(gravitationalConstant*massSaturn* massTitan)/(Math.pow(yPositionTargetBody,2));
+        xPressureGradientForce=((MASS_TITAN *Math.pow(xVelocityTargetBody,2))/xPositionTargetBody)+(gravitationalConstant*MASS_SATURN* MASS_TITAN)/(Math.pow(xPositionTargetBody,2));
+        yPressureGradientForce=((MASS_TITAN *Math.pow(yVelocityTargetBody,2))/yPositionTargetBody)+(gravitationalConstant*MASS_SATURN* MASS_TITAN)/(Math.pow(yPositionTargetBody,2));
     }
 
     public void setAtmosphericMass(){
@@ -61,12 +59,13 @@ public class WindSpeed implements WindSpeedInterface {
         return atmosphereDensity;
     }
 
+
     public void windSpeed(double xStartingPressure, double yStartingPressure, double latitude){
         Vector2D windVelocity= new Vector2D(0,0);
 
         xResultingPressure=(xPressureGradientForce/(4*Math.PI*Math.pow(titanRadius,2)))-xStartingPressure;
         double xPressureDifference=xStartingPressure-xResultingPressure;
-        xWindVelocityCF=(-1/atmosphereDensity)*(xPressureDifference/(2*Math.PI* titanRadius))*timeStep;
+        xWindVelocityCF=atmosphereDensity*(xPressureDifference/(2*Math.PI* titanRadius))*timeStep;
         if(latitude!=0) {
             xWindVelocityCF=(xWindVelocityCF / (-2 * angularVelocity * Math.sin(latitude*Math.PI/180)));
         }else{
@@ -75,7 +74,7 @@ public class WindSpeed implements WindSpeedInterface {
        
         yResultingPressure=(yPressureGradientForce/(4*Math.PI*Math.pow(titanRadius,2)))-yStartingPressure;
         double yPressureDifference=yStartingPressure-yResultingPressure;
-        yWindVelocityCF=(-1/atmosphereDensity)*(yPressureDifference/(2*Math.PI* titanRadius))*timeStep;
+        yWindVelocityCF=atmosphereDensity*(yPressureDifference/(2*Math.PI* titanRadius))*timeStep;
         if(latitude!=0) {
              yWindVelocityCF=(yWindVelocityCF / (-2 * angularVelocity * Math.sin(latitude*Math.PI/180)));
         }else{
@@ -83,6 +82,8 @@ public class WindSpeed implements WindSpeedInterface {
         }
 
     }
+
+    
 
     public Vector2D getPressure(){
         Vector2D currentPressure= new Vector2D(xResultingPressure,yResultingPressure);
@@ -92,7 +93,7 @@ public class WindSpeed implements WindSpeedInterface {
     public Vector2D updateModelAndGetDrag(Vector2D positionOfCraft, Vector2D velocityOfCraft){
         //Cross-sectional area relates to the area of a circle. Units m^2
         double altitude=Math.sqrt(Math.pow(positionOfCraft.getX(),2)+Math.pow(positionOfCraft.getY(),2));
-        double height=(altitude-titanRadius)/10E3;
+        double height=(altitude-titanRadius)/1E3;
         if(height<=ATMOSPHERE_HEIGHT && height>=0){
             for (SpaceObject spaceObject : titanSystem) {
                 spaceObject.updateForce(titanSystem);
@@ -114,7 +115,8 @@ public class WindSpeed implements WindSpeedInterface {
             return force;
         }
     }
-    public Vector2D getCurrentWindVelocity () {
-        return new Vector2D(xWindVelocityCF, yWindVelocityCF);
+    public Vector2D getCurrentWindVelocity() {
+     Vector2D wind=new Vector2D(xWindVelocityCF, yWindVelocityCF);
+     return wind;
     }
 }

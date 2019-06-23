@@ -73,7 +73,7 @@ public class WindSpeedStochastic implements WindSpeedInterface {
 
         xResultingPressure=(xPressureGradientForce/(4*Math.PI*Math.pow(titanRadius,2)))-xStartingPressure;
         double xPressureDifference=xStartingPressure-xResultingPressure;
-        xWindVelocityCF=(-1/atmosphereDensity)*(xPressureDifference/(2*Math.PI* titanRadius))*timeStep;
+        xWindVelocityCF=atmosphereDensity*(xPressureDifference/(2*Math.PI* titanRadius))*timeStep;
         if(latitude!=0) {
             xWindVelocityCF=(xWindVelocityCF + Math.random()*randomness*xWindVelocityCF)/ (-2 * angularVelocity * Math.sin(latitude*Math.PI/180));
         }else{
@@ -82,7 +82,7 @@ public class WindSpeedStochastic implements WindSpeedInterface {
        
         yResultingPressure=(yPressureGradientForce/(4*Math.PI*Math.pow(titanRadius,2)))-yStartingPressure;
         double yPressureDifference=yStartingPressure-yResultingPressure;
-        yWindVelocityCF=(-1/atmosphereDensity)*(yPressureDifference/(2*Math.PI* titanRadius))*timeStep;
+        yWindVelocityCF=atmosphereDensity*(yPressureDifference/(2*Math.PI* titanRadius))*timeStep;
         if(latitude!=0) {
             yWindVelocityCF=(yWindVelocityCF +Math.random()*randomness*yWindVelocityCF)/ (-2 * angularVelocity * Math.sin(latitude*Math.PI/180));
         }else{
