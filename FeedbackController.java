@@ -28,9 +28,9 @@ public class FeedbackController implements ControllerInterface {
         bodies.add(internalProbe);
     }
 
-    public Vector2D update(int timeStep, Simulation sim) {
+    public Vector2D updateWithContinuousThrust(int timeStep, Simulation sim) {
         
-        // Adjust deltaV and apply it to the velocity in internal simulation, update the internal simulation body/ies by the time step
+        // Adjust deltaV and apply it to the velocity in internal simulation, updateWithContinuousThrust the internal simulation body/ies by the time step
         double currentDistance = internalProbe.getDistanceFrom(titan);
         inverseDistance = 1/ internalProbe.getDistanceFrom(titan);
         deltaVMultiplier = Math.pow(constantMultiplier*inverseDistance,2);
@@ -61,7 +61,7 @@ public class FeedbackController implements ControllerInterface {
     }
 
     public Vector2D updateAndGetDeltaV(Simulation sim) {
-        Vector2D  deltaVUpdated = update(1, sim);
+        Vector2D  deltaVUpdated = updateWithContinuousThrust(1, sim);
         return deltaVUpdated;
     }
     public Vector2D convertDeltaVToForce (Vector2D deltaV) {
