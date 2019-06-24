@@ -13,6 +13,7 @@ public class WindSpeedStochastic implements WindSpeedInterface {
     private double xWindVelocityCF;//x-Component of wind velocity above 800m (Units: m/s)
     private double yWindVelocityCF;//y-Component of wind velocity above 800m (Units: m/s)
     private double gravitationalConstant = 6.67408E-11; //m^3/kg*s^2
+    private double atmosphereHeight=1500E3;//Units: m
     private double titanRadius=2.575E6;//Units: m
     private double atmosphericMass;//Units: kg
     private double conversionFactor=10E3; //Converts m/s to km/s for windspeed.
@@ -47,7 +48,7 @@ public class WindSpeedStochastic implements WindSpeedInterface {
     public void setAtmosphericMass(){
         //Unsure if this is used. Wait until I implement the thermal profile, if I get there.
         double volumeOfTargetBody=(4/3)*Math.PI*Math.pow(titanRadius,3);
-        double volumeOfAtmosphere=(4/3)*Math.PI*Math.pow(titanRadius +ATMOSPHERE_HEIGHT,3);
+        double volumeOfAtmosphere=(4/3)*Math.PI*Math.pow(titanRadius +atmosphereHeight,3);
         atmosphericMass=atmosphereDensity*(volumeOfAtmosphere-volumeOfTargetBody);
     }
 
