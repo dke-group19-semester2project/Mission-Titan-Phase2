@@ -16,6 +16,7 @@ public class WindSpeed implements WindSpeedInterface {
     private double atmosphericMass;//Units: kg
     private double conversionFactor=10E3; //Converts m/s to km/s for windspeed.
     private double timeStep;//How many seconds per calculation.
+    private double atmosphereHeight=1500E3;//Units: m
     //Need to use position data of Titan, but relative to Saturn for simplicity.
     private Planet titan= new Planet(-7.769539650426797E+08,9.025640976089063E+08,-3.896658973030882E+08,-4.279217248263016E+03,-2.783704647125639E+03,1.856691783450268E+03,1.342E23,0);
     //Saturn is the center of this celestial system.
@@ -45,7 +46,7 @@ public class WindSpeed implements WindSpeedInterface {
     public void setAtmosphericMass(){
         //Unsure if this is used. Wait until I implement the thermal profile, if I get there.
         double volumeOfTargetBody=(4/3)*Math.PI*Math.pow(titanRadius,3);
-        double volumeOfAtmosphere=(4/3)*Math.PI*Math.pow(titanRadius +ATMOSPHERE_HEIGHT,3);
+        double volumeOfAtmosphere=(4/3)*Math.PI*Math.pow(titanRadius +atmosphereHeight,3);
         atmosphericMass=atmosphereDensity*(volumeOfAtmosphere-volumeOfTargetBody);
     }
 
@@ -102,7 +103,7 @@ public class WindSpeed implements WindSpeedInterface {
             double crossSectionalArea=Math.PI*Math.pow(6,2);
             double angleOfApproach=Math.atan2(positionOfCraft.getY(), positionOfCraft.getX());
             double dragCoefficient=0.2;//Titan's atmosphere has a reynold's number of 10^7. Cd of a sphere at 10^7 is 0.2.
-            Vector2D force= new Vector2D(((1/atmosphereDensity)*Math.pow(xWindVelocityCF,2)*crossSectionalArea*Math.cos(angleOfApproach)*0.5*dragCoefficient),(atmosphereDensity*Math.pow(yWindVelocityCF,2)*crossSectionalArea*Math.sin(angleOfApproach)*0.5*dragCoefficient));
+            Vector2D force= new Vector2D(((atmosphereDensity)*Math.pow(xWindVelocityCF,2)*crossSectionalArea*Math.cos(angleOfApproach)*0.5*dragCoefficient),(atmosphereDensity*Math.pow(yWindVelocityCF,2)*crossSectionalArea*Math.sin(angleOfApproach)*0.5*dragCoefficient));
             return force;
         }else{
             Vector2D force=new Vector2D(0,0);
