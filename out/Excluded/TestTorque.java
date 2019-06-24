@@ -5,12 +5,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
-import javafx.scene.shape.Box;
 import javafx.scene.text.*;
 import javafx.geometry.*;
 import javafx.scene.*;
-import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Transform;
 import javafx.scene.shape.Rectangle;
 
 public class TestTorque extends Application{

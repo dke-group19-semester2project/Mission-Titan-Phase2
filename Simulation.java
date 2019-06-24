@@ -121,6 +121,7 @@ public class Simulation {
                 hasLanded = true;
                 System.out.println("The realProbe has landed.");
                 System.out.println("Total force produced : " + totalForce);
+                System.out.println("Total time steps: " + realProbe.simulationTime);
                 System.out.println("Current distance: \n" + newDistance);
                 System.out.println("Current position: \n" + realProbe.getPosition().toString());
                 Vector2D currentVelocity = realProbe.getVelocity();

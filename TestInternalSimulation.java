@@ -14,7 +14,7 @@ public class TestInternalSimulation extends JComponent{
     static double titanRadius = 2575*1000;
     static double startingDistance = titanRadius+800*1000;
     static double probeMass = 5000;
-    //static double orbitalSpeed = Math.sqrt((G*probeMass)/(startingDistance-titanRadius));
+    //static double orbitalSpeed = Math.sqrt((G*probeMass)/(startDistanceInternalSim-titanRadius));
     public static void main(String[] args) {
         // Set-up
         SimulationBody titan = new SimulationBody(new Vector2D(0,0), new Vector2D(0,0), 1.3452E23, 2*titanRadius, new WindSpeed(1));
@@ -28,24 +28,27 @@ public class TestInternalSimulation extends JComponent{
         frame.setVisible(true);
         //Vector2D deltaV = probe.getVelocity().multipliedBy(0.5);
         //testLandingDeltaV(deltaV, 1);
-        //solveDeltaV(1);
         solveMultiplierAsFunctionOfDistance(1); /* This currently works as a combination of the two velocity methods. */
-        //solveThrusterMagnitudeAsFunctionOfDistance(1);
 
 
+    }
+    public static void solveHohmannImpulse () {
+        // TODO: Implement a method that determines the correct impulse to use in the beginning so that the probe lands/crashes
+        // For the calculation, see: https://en.wikipedia.org/wiki/Hohmann_transfer_orbit
+        //
     }
 
     public static void solveMultiplierAsFunctionOfDistance (int delayBetweenThrusterUse) {
         double maxMultiplier = 30*1000;
         double minMultiplier = 1;
         double midMultiplier = (maxMultiplier+minMultiplier)/2;
-//        Vector2D landingVelocity = testLandingDeltaV(() -> {
-//            double distance = bodies.get(1).getDistanceFrom(bodies.get(0));
-//            Double inverseDistance = 1/distance;
-//            return inverseDistance;
-//        }, delayBetweenThrusterUse);
+        Vector2D landingVelocity = testLandingDeltaV(() -> {
+            double distance = bodies.get(1).getDistanceFrom(bodies.get(0));
+            Double inverseDistance = 1/distance;
+            return inverseDistance;
+        }, delayBetweenThrusterUse);
         int counter = 1;
-        Vector2D landingVelocity = new Vector2D(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+        //Vector2D landingVelocity = new Vector2D(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
         while (Math.abs(landingVelocity.x)>7 || Math.abs(landingVelocity.y)>7) {
             counter++;
             minMultiplier = midMultiplier;

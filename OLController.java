@@ -19,6 +19,7 @@ public class OLController implements ControllerInterface {
     double landingBurnFactor = 0.0001; // This and below values worked in internal simulation without drag
     double maxLandingBurnFactor = 0.2;
     boolean hohmannImpulseWasApplied = false;
+    public int simulationTime = 0;
     public OLController(){
         //titan = new SimulationBody(new Vector2D(0,0), new Vector2D(0,0), 1.3452E23, 2*titanRadius, new WindSpeed(1));
         bodies.add(titan);
@@ -44,47 +45,48 @@ public class OLController implements ControllerInterface {
         internalProbe.updatePositionAndVelocity(1, titan);
         forceUsed = convertDeltaVToForceMagnitude(deltaV);
         return deltaV;
-        // TODO: Testing below with 0-deltaV (i.e. thrusters are not being used). Change back once circular orbit found.
-        //return new Vector2D(0,0);
     }
     /*
-    Hohmann transfer update should only return non-zero values once, at the beginning of the landing simulation.
+    Hohmann transfer update should only return non-zero values at the beginning of the landing simulation and right before impact.
      */
     public Vector2D updateWithHohmannTransfer () {
+        simulationTime++;
         // TODO: Implement method so that it applies one big impulse in the beginning for transfer orbit, and suicide burn at the end
         double currentDistance = internalProbe.getDistanceFrom(titan);
         double currentSpeed = computeCurrentSpeed();
         Vector2D deltaV;
         if (!hohmannImpulseWasApplied) {
-            //deltaV = new Vector2D(0, -178.25);//
-            //deltaV = computeHohmannDeltaV();
-            deltaV = new Vector2D(0, -178.1); //Calculated by using Wolfram Alpha
+            double hohmannDeltaV = -178.1; // Based on the calculation of Hohmann Transfer. This parameter alone is sufficient with no drag.
+            deltaV = new Vector2D(0, hohmannDeltaV-44); // -44 was found with binary search and is used to counter drag.
             hohmannImpulseWasApplied = true;
-        }
-        // TODO: Add the landing burn once the wind model works again. The one below is probably too inefficient.
-//        else if (currentDistance<titanRadius+10*1000 || currentSpeed< 1000) {
-//            deltaV = internalProbe.getVelocity().multipliedBy(-(deltaVMultiplier+landingBurnFactor));
-//            landingBurnFactor = (landingBurnFactor+maxLandingBurnFactor)/2;
-//        }
-        else {
+        } else if (internalProbe.simulationTime>=5860 || currentDistance<titanRadius+50 || currentSpeed< 100) {
+            Vector2D windForce = internalProbe.currentDrag;
+            //Vector2D windResistDeltaV = convertForceToDeltaV(windForce).multipliedBy(-2);
+            System.out.println("Current velocity: " + internalProbe.getVelocity().toString());
+            double deltaY = Math.abs(internalProbe.getVelocity().getY()-2);
+            double deltaX = Math.abs(internalProbe.getVelocity().getX()-2);
+            deltaV = new Vector2D(deltaX, deltaY);//.substractVector(windResistDeltaV);
+        } else {
             deltaV = new Vector2D(0,0);
         }
         internalProbe.changeVelocityWithMainThrusters(deltaV);
         internalProbe.updatePositionAndVelocity(1, titan);
         forceUsed = convertDeltaVToForceMagnitude(deltaV);
-        //System.out.println("Force used: " + forceUsed);
         return deltaV;
     }
-    public  Vector2D computeHohmannDeltaV () {
-        // Calculate the required change in y-velocity for the probe to land on Titan using the Hohmann Transfer.
-        // Since initially the probe only has velocity in the y-direction, we can disregard x-dimension for HohmannDeltaV.
-        double r1 = titanRadius+1300*1000;
-        double r2 = startDistanceInternalSim;
-        double currentYVelocity = internalProbe.getVelocity().getY();
-        double deltaYV = -Math.sqrt((standardGravitationalParameter/r2)*(1-Math.sqrt(2*r1/(r1+r2))));//Math.sqrt((standardGravitationalParameter/r1)*(Math.sqrt(2*r2/(r1+r2))-1));//
-        System.out.println("DeltaYV: " + deltaYV);
-        return new Vector2D(0, deltaYV);
-    }
+//    public Vector2D updateHohmannLaunch () {
+//        if (!hohmannImpulseWasApplied) {
+//            double doubleDeltaV = 2700;
+//            deltaV = new Vector2D(doubleDeltaV, 0);
+//            hohmannImpulseWasApplied = true;
+//        } else {
+//            deltaV = new Vector2D(0,0);
+//        }
+//        internalProbe.changeVelocityWithMainThrusters(deltaV);
+//        internalProbe.updatePositionAndVelocity(1, titan);
+//        forceUsed = convertDeltaVToForceMagnitude(deltaV);
+//        return deltaV;
+//    }
 
     private double computeCurrentSpeed () {
         Vector2D currentVelocity = internalProbe.getVelocity();
@@ -94,6 +96,7 @@ public class OLController implements ControllerInterface {
     public Vector2D updateAndGetDeltaV(Simulation realSim) { // Simulation realSim is not needed by the OL controller. However, the feedback one needs it.
         Vector2D deltaVupdated = updateWithHohmannTransfer();
         //Vector2D deltaVupdated = updateWithContinuousThrust(1, realSim);
+        //Vector2D deltaVupdated = updateHohmannLaunch();
         return deltaVupdated;
     }
     public Vector2D convertDeltaVToForce (Vector2D deltaV) {
@@ -106,6 +109,11 @@ public class OLController implements ControllerInterface {
         Vector2D force = convertDeltaVToForce(deltaV);
         double forceMagnitude = Math.sqrt(force.x*force.x + force.y*force.y);
         return forceMagnitude;
+    }
+    public Vector2D convertForceToDeltaV (Vector2D force) {
+        // deltaV = F/m.
+        Vector2D deltaV = force.dividedBy(probeMass);
+        return deltaV;
     }
     public ArrayList<SimulationBody> getBodies () {
         return bodies;
