@@ -8,7 +8,7 @@ public class OLController implements ControllerInterface {
     static final double titanMass = 1.3452E23;
     static final double standardGravitationalParameter = G*titanMass;
     private double orbitalSpeed = Math.sqrt((standardGravitationalParameter)/startDistanceInternalSim);
-    private double forceUsed = 0;
+    public double forceUsed = 0;
     private static ArrayList<SimulationBody> bodies = new ArrayList<SimulationBody>();
     SimulationBody titan = new SimulationBody(new Vector2D(0,0), new Vector2D(0,0), 1.3452E23, 2*titanRadius, new WindSpeed(1));
     SimulationBody internalProbe = new SimulationBody(new Vector2D(startDistanceInternalSim,0), new Vector2D(0, orbitalSpeed/*1600*/), 5000, 1, new WindSpeed(1));
@@ -51,7 +51,6 @@ public class OLController implements ControllerInterface {
      */
     public Vector2D updateWithHohmannTransfer () {
         simulationTime++;
-        // TODO: Implement method so that it applies one big impulse in the beginning for transfer orbit, and suicide burn at the end
         double currentDistance = internalProbe.getDistanceFrom(titan);
         double currentSpeed = computeCurrentSpeed();
         Vector2D deltaV;
@@ -71,7 +70,9 @@ public class OLController implements ControllerInterface {
         }
         internalProbe.changeVelocityWithMainThrusters(deltaV);
         internalProbe.updatePositionAndVelocity(1, titan);
-        forceUsed = convertDeltaVToForceMagnitude(deltaV);
+        Vector2D landingBurn = internalProbe.currentLandingBurnForce;
+        double landingBurnMagnitude = Math.sqrt(landingBurn.x*landingBurn.x + landingBurn.y*landingBurn.y);
+        forceUsed = convertDeltaVToForceMagnitude(deltaV)+landingBurnMagnitude;
         return deltaV;
     }
 //    public Vector2D updateHohmannLaunch () {

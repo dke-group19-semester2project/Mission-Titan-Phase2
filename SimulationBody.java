@@ -10,9 +10,11 @@ public class SimulationBody{
     private Vector2D velocity; // Cartesian coordinates as m/s.
     double massInKg;
     double diameter; // In meters.
+    private Vector2D gravitationalForce;
     public Vector2D currentDrag = new Vector2D(0, 0);
     public int simulationTime = 0;
     public WindSpeedInterface windSpeed;
+    public Vector2D currentLandingBurnForce = new Vector2D(0,0);
 
     public SimulationBody(Vector2D initialPosition, Vector2D initialVelocity, double mass, double diameter, WindSpeedInterface windSpeed) {
         position = initialPosition;
@@ -60,7 +62,8 @@ public class SimulationBody{
     
     public Vector2D getAcceleration (SimulationBody attractingBody) {
         // F=ma => a=F/m
-        Vector2D gravitationalForce = getForceAsVector(attractingBody);
+        gravitationalForce = getForceAsVector(attractingBody);
+        //Vector2D gravitationalForce = getForceAsVector(attractingBody);
         //Vector2D drag = new Vector2D(0,0);//
         Vector2D drag = windSpeed.updateModelAndGetDrag(position,velocity);
         currentDrag = drag;
@@ -69,8 +72,10 @@ public class SimulationBody{
             System.out.println("Wind force: " + drag.toString());
         }
         Vector2D netForce = sumOf(gravitationalForce, drag);
-        if (simulationTime>=5850) {
+        if (simulationTime>=5860) {
             System.out.println("Net force: " + netForce.toString());
+            currentLandingBurnForce = netForce;
+            netForce = new Vector2D(0, 0);
         }
         Vector2D acceleration = netForce.dividedBy(this.massInKg); // Force is divided by the mass of the accelerating body
         return acceleration;
