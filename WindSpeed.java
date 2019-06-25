@@ -36,7 +36,6 @@ public class WindSpeed implements WindSpeedInterface {
 
     public void setAtmosphericDensity(double height){
         atmosphereDensity=0.01+(height-128)*(-0.0004347826+(height-105)*(0.000019486+(height-77)*(-0.0000017686+(height-61)*(0.000000041+(height-51)*(-5.0588235E-11+(height-43)*(2.9033613E-11+(height-37)*(-1.4199379E-11+(height-33)*(-9.3512492E-13+(height-17)*-2.7954473E-14))))))));
-
     }
 
     public void pressureGradientForce(double xPositionTargetBody, double yPositionTargetBody, double xVelocityTargetBody, double yVelocityTargetBody){
