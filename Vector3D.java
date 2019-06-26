@@ -3,61 +3,46 @@ public class Vector3D {
     private double x;
     private double y;
     private double z;
-    private double distance;
+    private double length;
 
     public Vector3D(double x, double y, double z) {
         this.x = x;
         this.y = y;
         this.z = z;
-        this.distance = Math.sqrt(x*x + y*y + z*z);
+        this.length = this.getLength();
     }
 
-    public Vector3D addVector(Vector3D vector3D) {
-        Vector3D result = new Vector3D(0, 0, 0);
-        result.x = this.x + vector3D.x;
-        result.y = this.y + vector3D.y;
-        result.z = this.z + vector3D.z;
-        return result;
+    public Vector3D() {
+        this.x = 0;
+        this.y = 0;
+        this.z = 0;
+        this.length = this.getLength();
     }
+
+    public Vector3D addVector(Vector3D v) {
+        return new Vector3D(this.x + v.x, this.y + v.y, this.z + v.z);
+    }
+
     public Vector3D addConstant(double d) {
         return new Vector3D(this.x + d, this.y + d, this.z + d);
     }
 
-    public Vector3D multiplyVector(Vector3D vector3D) {
-        Vector3D result = new Vector3D(0,0,0);
-        result.x = this.x* vector3D.x;
-        result.y = this.y* vector3D.y;
-        result.z = this.z* vector3D.z;
-        return result;
+    public Vector3D substractVector(Vector3D v) {
+        return new Vector3D(this.x - v.x, this.y - v.y, this.z - v.z);
     }
 
-    public Vector3D multiply(double c) {
-        Vector3D result = new Vector3D(0,0,0);
-        result.x = this.x*c;
-        result.y = this.y*c;
-        result.z = this.z*c;
-        return result;
-    }
-
-    public Vector3D normalizeVector() {
-        Vector3D result = new Vector3D(0,0,0);
-        this.distance = this.getDistance();
-        result.x = this.x/this.distance;
-        result.y = this.y/this.distance;
-        result.z = this.z/this.distance;
-        return result;
-    }
-
-    public Vector3D substractVector(Vector3D vector3D) {
-        Vector3D result = new Vector3D(0,0,0);
-        result.x = this.x- vector3D.x;
-        result.y = this.y- vector3D.y;
-        result.z = this.z- vector3D.z;
-        return result;
-    }
     public Vector3D substractConstant(double d) {
         return new Vector3D(this.x - d, this.y - d, this.z - d);
     }
+
+    public Vector3D multiplyVector(Vector3D v) {
+        return new Vector3D(this.x * v.x, this.y * v.y, this.z * v.z);
+    }
+
+    public Vector3D multiplyConstant(double d) {
+        return new Vector3D(this.x * d, this.y * d, this.z * d);
+    }
+
     public Vector3D divideVector(Vector3D v) {
         return new Vector3D(this.x / v.x, this.y / v.y, this.z / v.z);
     }
@@ -66,9 +51,18 @@ public class Vector3D {
         return new Vector3D(this.x / d, this.y / d, this.z / d);
     }
 
-    @Override
+    /**
+     * this method normalizes a vector
+     * @return returns a normalized vector
+     */
+    public Vector3D normalizeVector() {
+        this.length = this.getLength();
+        return new Vector3D(this.x / this.length, this.y / this.length, this.z / this.length);
+    }
+
+    @Override  
     public String toString() {
-        return this.getX() + " " + this.getY() + " " + this.getZ();
+        return "x : " + this.getX() + " y :" + this.getY() + " z :" + this.getZ();
     }
 
     /**
@@ -114,16 +108,21 @@ public class Vector3D {
     }
 
     /**
-     * @return the distance
+     * @return the length
      */
-    public double getDistance() {
-        return Math.sqrt(x*x + y*y + z*z);
+    public double getLength() {
+        this.setLength(Math.sqrt(x * x + y * y + z * z));
+        return this.length;
     }
 
     /**
-     * @param distance the distance to set
+     * @param length the length to set
      */
-    public void setDistance(double distance) {
-        this.distance = distance;
+    public void setLength(double length) {
+        this.length = length;
+    }
+
+    public Vector3D clone() {
+        return new Vector3D(this.x, this.y, this.z);
     }
 }
