@@ -43,15 +43,17 @@ public class FeedbackController implements ControllerInterface {
             deltaV = internalProbe.getVelocity().multipliedBy(-(deltaVMultiplier+landingBurnFactor));
             landingBurnFactor = (landingBurnFactor+maxLandingBurnFactor)/2;
         }
-        internalProbe.changeVelocityWithMainThrusters(deltaV);
+        Vector2D thrust = convertDeltaVToForce(deltaV);
+        internalProbe.changeMainThrust(thrust);
         internalProbe.updatePositionAndVelocity(1, titan);
         
         FBProbeVelocity = sim.getRealProbe().getVelocity();
         OLProbeVelocity = internalProbe.getVelocity();
         deltaVFeedback = FBProbeVelocity.substractVector(OLProbeVelocity).multiplyConstant(-1);
         forceUsed = convertDeltaVToForceMagnitude(deltaVFeedback);
-        
-        return deltaVFeedback;
+
+        Vector2D thrustFeedback = convertDeltaVToForce(deltaVFeedback);
+        return thrustFeedback;
     }
 
     private double computeCurrentSpeed () {
@@ -65,8 +67,8 @@ public class FeedbackController implements ControllerInterface {
         return deltaVUpdated;
     }
     public Vector2D convertDeltaVToForce (Vector2D deltaV) {
-        double xForce = deltaVFeedback.x*probeMass;
-        double yForce = deltaVFeedback.y*probeMass;
+        double xForce = deltaV.x*probeMass;
+        double yForce = deltaV.y*probeMass;
         return new Vector2D(xForce, yForce);
     }
     public double convertDeltaVToForceMagnitude (Vector2D deltaV) {

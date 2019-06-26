@@ -8,12 +8,12 @@ public class RunSimulation {
     public static void main(String[] args) {
 
 
-        for (int i = 0; i<1000; i++) {
-            displayInternalSimulation();
-            //displayClosedLoopSimulation();
+        //for (int i = 0; i<1000; i++) {
+            //displayInternalSimulation();
+            displayClosedLoopSimulation();
            //displayOpenLoopSimulation();
             //displayLaunchInternalSimulation();
-        }
+        //}
     }
     public static void displayInternalSimulation () {
         final double titanRadius = 2575*1000;

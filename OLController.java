@@ -41,10 +41,11 @@ public class OLController implements ControllerInterface {
             deltaV = internalProbe.getVelocity().multipliedBy(-(deltaVMultiplier+landingBurnFactor));
             landingBurnFactor = (landingBurnFactor+maxLandingBurnFactor)/2;
         }
-        internalProbe.changeVelocityWithMainThrusters(deltaV);
+         Vector2D thrust = convertDeltaVToForce(deltaV);
+        internalProbe.changeMainThrust(thrust);
         internalProbe.updatePositionAndVelocity(1, titan);
         forceUsed = convertDeltaVToForceMagnitude(deltaV);
-        return deltaV;
+        return thrust;
     }
     /*
     Hohmann transfer update should only return non-zero values at the beginning of the landing simulation and right before impact.
@@ -69,10 +70,11 @@ public class OLController implements ControllerInterface {
         } else {
             deltaV = new Vector2D(0,0);
         }
-        internalProbe.changeVelocityWithMainThrusters(deltaV);
+        Vector2D thrust = convertDeltaVToForce(deltaV);
+        internalProbe.changeMainThrust(thrust);
         internalProbe.updatePositionAndVelocity(1, titan);
         forceUsed = convertDeltaVToForceMagnitude(deltaV);
-        return deltaV;
+        return thrust;
     }
 //    public Vector2D updateHohmannLaunch () {
 //        if (!hohmannImpulseWasApplied) {
@@ -82,7 +84,7 @@ public class OLController implements ControllerInterface {
 //        } else {
 //            deltaV = new Vector2D(0,0);
 //        }
-//        internalProbe.changeVelocityWithMainThrusters(deltaV);
+//        internalProbe.changeMainThrust(deltaV);
 //        internalProbe.updatePositionAndVelocity(1, titan);
 //        forceUsed = convertDeltaVToForceMagnitude(deltaV);
 //        return deltaV;
@@ -94,8 +96,8 @@ public class OLController implements ControllerInterface {
         return speed;
     }
     public Vector2D updateAndGetDeltaV(Simulation realSim) { // Simulation realSim is not needed by the OL controller. However, the feedback one needs it.
-        Vector2D deltaVupdated = updateWithHohmannTransfer();
-        //Vector2D deltaVupdated = updateWithContinuousThrust(1, realSim);
+        //Vector2D deltaVupdated = updateWithHohmannTransfer();
+        Vector2D deltaVupdated = updateWithContinuousThrust(1, realSim);
         //Vector2D deltaVupdated = updateHohmannLaunch();
         return deltaVupdated;
     }

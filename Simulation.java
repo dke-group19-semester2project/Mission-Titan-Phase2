@@ -1,9 +1,5 @@
 import javax.swing.*;
-import javax.swing.text.StyledEditorKit;
 import java.awt.*;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -94,7 +90,7 @@ public class Simulation {
         for (int i=0; i<60000; i++) {
             printCounter++;
             Vector2D deltaV = controller.updateAndGetDeltaV(this);
-            realProbe.changeVelocityWithMainThrusters(deltaV);
+            realProbe.changeMainThrust(deltaV);
             int currentForceMagnitude = (int) controller.convertDeltaVToForceMagnitude(deltaV);
             //if (printCounter%200==0) {
                 //System.out.println(/*"Current thruster force magnitude: \n" + */ currentForceMagnitude);

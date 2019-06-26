@@ -10,7 +10,9 @@ public class SimulationBody{
     private Vector2D velocity; // Cartesian coordinates as m/s.
     double massInKg;
     double diameter; // In meters.
+    private Vector2D thrust = new Vector2D(0,0);
     public Vector2D currentDrag = new Vector2D(0, 0);
+    private Vector2D netForce;
     public int simulationTime = 0;
     public WindSpeedInterface windSpeed;
 
@@ -35,11 +37,12 @@ public class SimulationBody{
         return speed;
     }
     /*
-        The objective of method changeVelocityWithMainThrusters is to update velocity (without taking another time step).
+        The objective of method changeMainThrust is to update velocity (without taking another time step).
         For now the spacecraft is presumed to be correctly oriented to either increase or reduce the speed.
      */
-    public void changeVelocityWithMainThrusters(Vector2D deltaV) {
-        velocity = sumOf(velocity, deltaV);
+    public void changeMainThrust(Vector2D newThrust) {
+        //velocity = sumOf(velocity, deltaV);
+        thrust = newThrust;
     }
     public void updatePositionAndVelocity (int time, SimulationBody attractingBody) {
         simulationTime = simulationTime+time;
@@ -68,10 +71,12 @@ public class SimulationBody{
             //System.out.println("Wind velocity: " + windSpeed.getCurrentWindVelocity().toString());
             System.out.println("Wind force: " + drag.toString());
         }
-        Vector2D netForce = sumOf(gravitationalForce, drag);
+        Vector2D gravityPlusDrag = sumOf(gravitationalForce, drag);
         if (simulationTime>=5850) {
-            System.out.println("Net force: " + netForce.toString());
+            System.out.println("Net force: " + gravityPlusDrag.toString());
         }
+        System.out.println("Thrust = " + thrust.toString());
+        netForce = sumOf(gravityPlusDrag, thrust);
         Vector2D acceleration = netForce.dividedBy(this.massInKg); // Force is divided by the mass of the accelerating body
         return acceleration;
     }
